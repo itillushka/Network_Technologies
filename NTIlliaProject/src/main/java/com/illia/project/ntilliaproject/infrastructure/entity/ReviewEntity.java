@@ -34,4 +34,51 @@ public class ReviewEntity {
     @Temporal(TemporalType.DATE)
     private Date reviewDate;
 
+    public int getReviewID() {
+        return reviewID;
+    }
+
+    public void setReviewID(int reviewID) {
+        this.reviewID = reviewID;
+    }
+
+    public BookEntity getBook() {
+        return book;
+    }
+
+    public void setBook(BookEntity book) {
+        this.book = book;
+    }
+
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public Date getReviewDate() {
+        return reviewDate;
+    }
+
+    public void setReviewDate(Date reviewDate) {
+        this.reviewDate = reviewDate;
+    }
 }

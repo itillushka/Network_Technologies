@@ -36,4 +36,51 @@ public class LoanEntity {
     @Temporal(TemporalType.DATE)
     private Date returnDate;
 
+    public int getLoanID() {
+        return loanID;
+    }
+
+    public void setLoanID(int loanID) {
+        this.loanID = loanID;
+    }
+
+    public BookEntity getBook() {
+        return book;
+    }
+
+    public void setBook(BookEntity book) {
+        this.book = book;
+    }
+
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
+
+    public Date getLoanDate() {
+        return loanDate;
+    }
+
+    public void setLoanDate(Date loanDate) {
+        this.loanDate = loanDate;
+    }
+
+    public Date getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public Date getReturnDate() {
+        return returnDate;
+    }
+
+    public void setReturnDate(Date returnDate) {
+        this.returnDate = returnDate;
+    }
 }

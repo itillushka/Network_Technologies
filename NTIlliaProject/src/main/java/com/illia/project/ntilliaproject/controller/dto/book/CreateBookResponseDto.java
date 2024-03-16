@@ -1,47 +1,33 @@
-package com.illia.project.ntilliaproject.infrastructure.entity;
+package com.illia.project.ntilliaproject.controller.dto.book;
 
-import jakarta.persistence.*;
+public class CreateBookResponseDto {
 
-import java.util.List;
-
-@Entity
-@Table(name = "books", schema = "library")
-public class BookEntity {
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "bookID")
     private int bookID;
 
-    @Basic
-    @Column(name = "isbn")
     private String ISBN;
 
-    @Basic
-    @Column(name = "title")
     private String title;
 
-    @Basic
-    @Column(name = "author")
     private String author;
 
-    @Basic
-    @Column(name = "publisher")
     private String publisher;
 
-    @Basic
-    @Column(name = "yearPublished")
     private int yearPublished;
 
-    @Basic
-    @Column(name = "availableCopies")
     private int availableCopies;
 
-    @OneToMany(mappedBy = "book")
-    private List<LoanEntity> loans;
+    public CreateBookResponseDto(int bookID, String ISBN, String title, String author, String publisher, int yearPublished, int availableCopies) {
+        this.bookID = bookID;
+        this.ISBN = ISBN;
+        this.title = title;
+        this.author = author;
+        this.publisher = publisher;
+        this.yearPublished = yearPublished;
+        this.availableCopies = availableCopies;
+    }
 
-    @OneToMany(mappedBy = "book")
-    private List<ReviewEntity> reviews;
+    public CreateBookResponseDto() {
+    }
 
     public int getBookID() {
         return bookID;
@@ -97,21 +83,5 @@ public class BookEntity {
 
     public void setAvailableCopies(int availableCopies) {
         this.availableCopies = availableCopies;
-    }
-
-    public List<LoanEntity> getLoans() {
-        return loans;
-    }
-
-    public void setLoans(List<LoanEntity> loans) {
-        this.loans = loans;
-    }
-
-    public List<ReviewEntity> getReviews() {
-        return reviews;
-    }
-
-    public void setReviews(List<ReviewEntity> reviews) {
-        this.reviews = reviews;
     }
 }
