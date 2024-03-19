@@ -33,11 +33,7 @@ public class UserController {
         return userService.getOne(id);
     }
 
-    @PostMapping
-    public ResponseEntity<CreateUserResponseDto> create(@RequestBody CreateUserDto user){
-        var newUser = userService.create(user);
-        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
-    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable long id) {
         userService.delete(id);

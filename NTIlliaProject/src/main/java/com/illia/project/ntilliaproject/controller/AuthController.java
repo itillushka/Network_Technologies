@@ -1,31 +1,43 @@
 package com.illia.project.ntilliaproject.controller;
 
+import com.illia.project.ntilliaproject.controller.dto.LoginDto;
+import com.illia.project.ntilliaproject.controller.dto.LoginResponseDto;
+import com.illia.project.ntilliaproject.controller.dto.RegisterDto;
+import com.illia.project.ntilliaproject.controller.dto.RegisterResponseDto;
+import com.illia.project.ntilliaproject.controller.dto.user.CreateUserDto;
+import com.illia.project.ntilliaproject.controller.dto.user.CreateUserResponseDto;
+import com.illia.project.ntilliaproject.service.AuthService;
 import com.illia.project.ntilliaproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-
-    private final UserService userService;
-
+    private final AuthService authService;
     @Autowired
-    public AuthController(UserService userService) {
-        this.userService = userService;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
-    public void SignIn(){
+    @PostMapping("/register")
+    public ResponseEntity<RegisterResponseDto> register(@RequestBody RegisterDto requestBody){
 
-    }
-    /*
-    @PostMapping("/signup")
-    public ResponseEntity<CreateUserResponseDto> signUp(@RequestBody CreateUserDto user){
-        var newUser = userService.create(user);
-        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+        RegisterResponseDto dto = authService.register(requestBody);
+        return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
 
-     */
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginDto requestBody){
+        LoginResponseDto dto = authService.login(requestBody);
+        return new ResponseEntity<>(dto, HttpStatus.CREATED);
+    }
+
+
 
 }

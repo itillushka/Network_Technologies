@@ -1,6 +1,6 @@
 package com.illia.project.ntilliaproject.controller.dto;
 
-public class SignInResponseDto {
+public class LoginResponseDto {
     private String token;
 
     public String getToken() {
@@ -11,7 +11,7 @@ public class SignInResponseDto {
         this.token = token;
     }
 
-    public SignInResponseDto(String token) {
+    public LoginResponseDto(String token) {
         this.token = token;
     }
 }

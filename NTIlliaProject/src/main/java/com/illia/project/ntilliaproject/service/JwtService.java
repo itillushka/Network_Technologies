@@ -1,5 +1,7 @@
 package com.illia.project.ntilliaproject.service;
 
+import com.illia.project.ntilliaproject.commonTypes.UserRole;
+import com.illia.project.ntilliaproject.infrastructure.entity.AuthEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -17,6 +19,8 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
+    private long tokentExpirationTime = 1000 * 60 * 24;
+
     @Value("${jwt.signing.key}")
     private String jwtSigningKey;
 
@@ -24,8 +28,13 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public String generateToken(UserEntity userDetails) {
+    public String generateToken(AuthEntity userDetails) {
         return generateToken(new HashMap<>(), userDetails);
+    }
+
+    public UserRole extractRole(String token) {
+        String roleString = extractClaim(token, (claims) -> claims.get("role", String.class));
+        return UserRole.valueOf(roleString);
     }
 
     public boolean isTokenValid(String token) {
@@ -42,12 +51,13 @@ public class JwtService {
         return claimsResolvers.apply(claims);
     }
 
-    private String generateToken(Map<String, Object> extraClaims, UserEntity userDetails) {
+    private String generateToken(Map<String, Object> extraClaims, AuthEntity userDetails) {
+        extraClaims.put("role", userDetails.getRole());
         return Jwts.builder()
                 .claims(extraClaims)
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .expiration(new Date(System.currentTimeMillis() + tokentExpirationTime))
                 .signWith(getSigningKey())
                 .compact();
     }
@@ -57,6 +67,7 @@ public class JwtService {
     }
 
     private Date extractExpiration(String token) {
+
         return extractClaim(token, Claims::getExpiration);
     }
 

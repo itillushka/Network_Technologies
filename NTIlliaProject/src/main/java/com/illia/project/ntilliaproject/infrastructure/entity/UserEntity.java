@@ -1,5 +1,6 @@
 package com.illia.project.ntilliaproject.infrastructure.entity;
 
+import com.illia.project.ntilliaproject.commonTypes.UserRole;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -13,35 +14,26 @@ public class UserEntity {
     @Column(name = "userID")
     private int userID;
 
-    public String getUsername() {
-        return username;
-    }
-
     @Basic
-    @Column(name = "username", unique = true)
-    private String username;
-
-    @Basic
-    @Column(name = "password")
-    private String password;
-
-    @Basic
-    @Column(name = "role")
-    private String role;
+    @Column(name = "name")
+    private String name;
 
     @Basic
     @Column(name = "email")
     private String email;
 
-    @Basic
-    @Column(name = "name")
-    private String name;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private AuthEntity auth;
 
-    @OneToMany(mappedBy = "user")
-    private List<LoanEntity> loans;
+    public UserEntity(int userID, String name, String email) {
+        this.userID = userID;
+        this.name = name;
+        this.email = email;
+    }
 
-    @OneToMany(mappedBy = "user")
-    private List<ReviewEntity> reviews;
+    public UserEntity() {
+
+    }
 
     public int getUserID() {
         return userID;
@@ -49,34 +41,6 @@ public class UserEntity {
 
     public void setUserID(int userID) {
         this.userID = userID;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getName() {
@@ -87,21 +51,12 @@ public class UserEntity {
         this.name = name;
     }
 
-    public List<LoanEntity> getLoans() {
-        return loans;
+    public String getEmail() {
+        return email;
     }
 
-    public void setLoans(List<LoanEntity> loans) {
-        this.loans = loans;
+    public void setEmail(String email) {
+        this.email = email;
     }
-
-    public List<ReviewEntity> getReviews() {
-        return reviews;
-    }
-
-    public void setReviews(List<ReviewEntity> reviews) {
-        this.reviews = reviews;
-    }
-
 
 }
