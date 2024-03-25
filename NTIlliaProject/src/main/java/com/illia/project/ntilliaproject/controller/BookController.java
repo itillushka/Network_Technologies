@@ -22,7 +22,7 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public List<GetBookDto> getAllBooks(){
         return bookService.getAll();
     }
@@ -32,7 +32,7 @@ public class BookController {
         return bookService.getOne(id);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<CreateBookResponseDto> create(@RequestBody CreateBookDto book){
         var newBook = bookService.create(book);
         return new ResponseEntity<>(newBook, HttpStatus.CREATED);

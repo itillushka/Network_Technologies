@@ -8,7 +8,6 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import com.illia.project.ntilliaproject.infrastructure.entity.UserEntity;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -19,9 +18,9 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    private long tokentExpirationTime = 1000 * 60 * 24;
+    private final long tokenExpirationTime = 1000 * 60 * 24;
 
-    @Value("${jwt.signing.key}")
+    @Value("${token.sign.key}$")
     private String jwtSigningKey;
 
     public String extractUsername(String token) {
@@ -57,7 +56,7 @@ public class JwtService {
                 .claims(extraClaims)
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + tokentExpirationTime))
+                .expiration(new Date(System.currentTimeMillis() + tokenExpirationTime))
                 .signWith(getSigningKey())
                 .compact();
     }

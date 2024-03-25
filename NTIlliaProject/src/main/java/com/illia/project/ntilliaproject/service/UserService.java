@@ -20,18 +20,11 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-
-    private final AuthenticationManager authenticationManager;
-    private final JwtService jwtService;
 
     // dependency injection
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
-        this.jwtService = jwtService;
     }
     public GetUserDto getOne(long id){
         var userEntity = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
@@ -57,16 +50,4 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    /*public RegisterResponseDto register(RegisterDto dto) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword()));
-        UserEntity user = userRepository.findByUsername(dto.getUsername()).orElseThrow();
-        var token = jwtService.generateToken(user);
-        return new RegisterResponseDto(token);
-
-    }*/
-
-
-    public UserEntity getOneByUsername(String username){
-        return userRepository.findByUsername(username).orElseThrow();
-    }
 }
