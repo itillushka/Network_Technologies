@@ -6,7 +6,9 @@ import com.illia.project.ntilliaproject.controller.dto.loan.GetLoanDto;
 import com.illia.project.ntilliaproject.infrastructure.entity.LoanEntity;
 import com.illia.project.ntilliaproject.infrastructure.entity.ReviewEntity;
 import com.illia.project.ntilliaproject.service.LoanService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,9 +35,13 @@ public class LoanController {
         return loanService.getOne(id);
     }
 
-    @PostMapping
-    public ResponseEntity<CreateLoanResponseDto> create(@RequestBody CreateLoanDto loan){
-        var newLoan = loanService.create(loan);
+    @PostMapping("/newLoan")
+    public ResponseEntity<CreateLoanResponseDto> create(@RequestBody CreateLoanDto loan,HttpServletRequest request){
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        var newLoan = loanService.create(loan, token);
         return new ResponseEntity<>(newLoan, HttpStatus.CREATED);
     }
     @DeleteMapping("/{id}")

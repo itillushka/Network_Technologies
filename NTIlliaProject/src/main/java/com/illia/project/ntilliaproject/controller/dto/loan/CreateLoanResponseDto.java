@@ -6,14 +6,17 @@ public class CreateLoanResponseDto {
 
     private int loanID;
 
+    private int userID;
+
     private Date loanDate;
 
     private Date dueDate;
 
     private Date returnDate;
 
-    public CreateLoanResponseDto(int loanID, Date loanDate, Date dueDate, Date returnDate) {
+    public CreateLoanResponseDto(int loanID, int userID, Date loanDate, Date dueDate, Date returnDate) {
         this.loanID = loanID;
+        this.userID = userID;
         this.loanDate = loanDate;
         this.dueDate = dueDate;
         this.returnDate = returnDate;
@@ -48,5 +51,13 @@ public class CreateLoanResponseDto {
 
     public Date getReturnDate() {
         return returnDate;
+    }
+
+    public int getUserID() {
+        return userID;
+    }
+
+    public void setUserID(int userID) {
+        this.userID = userID;
     }
 }

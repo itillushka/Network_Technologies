@@ -36,6 +36,10 @@ public class JwtService {
         return UserRole.valueOf(roleString);
     }
 
+    public Integer extractUserID(String token) {
+        return extractClaim(token, claims -> claims.get("userID", Integer.class));
+}
+
     public boolean isTokenValid(String token) {
         try {
             final String userName = extractUsername(token);
@@ -52,6 +56,7 @@ public class JwtService {
 
     private String generateToken(Map<String, Object> extraClaims, AuthEntity userDetails) {
         extraClaims.put("role", userDetails.getRole());
+        extraClaims.put("userID", userDetails.getUser().getUserID());
         return Jwts.builder()
                 .claims(extraClaims)
                 .subject(userDetails.getUsername())
