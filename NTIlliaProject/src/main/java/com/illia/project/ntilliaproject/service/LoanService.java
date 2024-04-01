@@ -102,6 +102,10 @@ public class LoanService {
         if (loanEntity.getUser().getUserID() != userID) {
             throw new RuntimeException("Loan does not belong to the user");
         }
+
+        var bookEntity = bookRepository.findBybookID(loanEntity.getBook().getBookID())
+                .orElseThrow(() -> new RuntimeException("Book not found"));
+        bookEntity.setAvailableCopies(bookEntity.getAvailableCopies() + 1);
         System.out.println("All criteria passed");
         loanEntity.setReturnDate(returnLoanDto.getReturnDate());
         loanEntity.setStatus(LoanStatus.PENDING_RETURN);
