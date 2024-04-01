@@ -1,5 +1,6 @@
 package com.illia.project.ntilliaproject.infrastructure.entity;
 
+import com.illia.project.ntilliaproject.commonTypes.LoanStatus;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -35,6 +36,10 @@ public class LoanEntity {
     @Column(name = "returnDate")
     @Temporal(TemporalType.DATE)
     private Date returnDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private LoanStatus status = LoanStatus.PENDING;
 
     public int getLoanID() {
         return loanID;
@@ -82,5 +87,13 @@ public class LoanEntity {
 
     public void setReturnDate(Date returnDate) {
         this.returnDate = returnDate;
+    }
+
+    public LoanStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(LoanStatus status) {
+        this.status = status;
     }
 }

@@ -36,6 +36,7 @@ public class JwtService {
         return UserRole.valueOf(roleString);
     }
 
+    //extract user id from token
     public Integer extractUserID(String token) {
         return extractClaim(token, claims -> claims.get("userID", Integer.class));
 }
@@ -56,6 +57,7 @@ public class JwtService {
 
     private String generateToken(Map<String, Object> extraClaims, AuthEntity userDetails) {
         extraClaims.put("role", userDetails.getRole());
+        // put user id from userDetails
         extraClaims.put("userID", userDetails.getUser().getUserID());
         return Jwts.builder()
                 .claims(extraClaims)

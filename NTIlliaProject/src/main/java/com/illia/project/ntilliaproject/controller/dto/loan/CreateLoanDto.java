@@ -14,7 +14,6 @@ public class CreateLoanDto {
 
     private int bookID;
 
-
     private Date loanDate;
 
     private Date dueDate;

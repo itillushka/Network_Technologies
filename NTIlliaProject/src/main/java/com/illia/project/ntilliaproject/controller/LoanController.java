@@ -1,8 +1,6 @@
 package com.illia.project.ntilliaproject.controller;
 
-import com.illia.project.ntilliaproject.controller.dto.loan.CreateLoanDto;
-import com.illia.project.ntilliaproject.controller.dto.loan.CreateLoanResponseDto;
-import com.illia.project.ntilliaproject.controller.dto.loan.GetLoanDto;
+import com.illia.project.ntilliaproject.controller.dto.loan.*;
 import com.illia.project.ntilliaproject.infrastructure.entity.LoanEntity;
 import com.illia.project.ntilliaproject.infrastructure.entity.ReviewEntity;
 import com.illia.project.ntilliaproject.service.LoanService;
@@ -11,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,13 +36,28 @@ public class LoanController {
 
     @PostMapping("/newLoan")
     public ResponseEntity<CreateLoanResponseDto> create(@RequestBody CreateLoanDto loan,HttpServletRequest request){
+
+        //get token from header
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        //remove Bearer from token
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
         }
+        //create new loan
         var newLoan = loanService.create(loan, token);
         return new ResponseEntity<>(newLoan, HttpStatus.CREATED);
     }
+
+    @PostMapping("/{loanId}/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UpdateStatusResponseDto> updateStatus(@RequestBody UpdateStatusDto updateStatusDto, @PathVariable String loanId){
+
+        var loanIdLong = Long.parseLong(loanId.substring(1, loanId.length() - 1));
+
+        var updatedLoan = loanService.updateStatus(updateStatusDto, loanIdLong);
+        return new ResponseEntity<>(updatedLoan, HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable long id) {
         loanService.delete(id);

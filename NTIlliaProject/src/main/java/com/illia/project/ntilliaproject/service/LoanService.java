@@ -1,8 +1,6 @@
 package com.illia.project.ntilliaproject.service;
 
-import com.illia.project.ntilliaproject.controller.dto.loan.CreateLoanDto;
-import com.illia.project.ntilliaproject.controller.dto.loan.CreateLoanResponseDto;
-import com.illia.project.ntilliaproject.controller.dto.loan.GetLoanDto;
+import com.illia.project.ntilliaproject.controller.dto.loan.*;
 import com.illia.project.ntilliaproject.infrastructure.entity.LoanEntity;
 import com.illia.project.ntilliaproject.infrastructure.repository.BookRepository;
 import com.illia.project.ntilliaproject.infrastructure.repository.LoanRepository;
@@ -55,8 +53,10 @@ public class LoanService {
                 .orElseThrow(() -> new RuntimeException("Book not found"));
         System.out.println("Book found");
 
+        // extract user id from token
         Integer userID = jwtService.extractUserID(token);
         System.out.println(userID);
+        // find user by userid
         var userEntity = userRepository.findByuserID(userID)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -79,6 +79,14 @@ public class LoanService {
                 newLoan.getLoanDate(),
                 newLoan.getDueDate(),
                 newLoan.getReturnDate());
+    }
+
+    public UpdateStatusResponseDto updateStatus(UpdateStatusDto updateStatusDto, long loanId){
+        var loanEntity = loanRepository.findByloanID(loanId)
+                .orElseThrow(() -> new RuntimeException("Loan not found"));
+        loanEntity.setStatus(updateStatusDto.getStatus());
+        loanRepository.save(loanEntity);
+        return new UpdateStatusResponseDto(loanEntity.getLoanID(), loanEntity.getStatus());
     }
 
     public void delete(long id){
