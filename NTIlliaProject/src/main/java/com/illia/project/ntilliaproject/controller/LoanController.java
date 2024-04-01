@@ -1,8 +1,6 @@
 package com.illia.project.ntilliaproject.controller;
 
 import com.illia.project.ntilliaproject.controller.dto.loan.*;
-import com.illia.project.ntilliaproject.infrastructure.entity.LoanEntity;
-import com.illia.project.ntilliaproject.infrastructure.entity.ReviewEntity;
 import com.illia.project.ntilliaproject.service.LoanService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +54,24 @@ public class LoanController {
 
         var updatedLoan = loanService.updateStatus(updateStatusDto, loanIdLong);
         return new ResponseEntity<>(updatedLoan, HttpStatus.OK);
+    }
+
+    @PostMapping("/{loanId}/return")
+    public ResponseEntity<ReturnLoanResponseDto> returnLoan(@RequestBody ReturnLoanDto returnLoanDto, @PathVariable String loanId, HttpServletRequest request){
+
+        var loanIdLong = Long.parseLong(loanId.substring(1, loanId.length() - 1));
+        System.out.println(loanIdLong);
+
+        //get token from header
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        //remove Bearer from token
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        System.out.println(token);
+
+        var returnedLoan = loanService.returnLoan(returnLoanDto, loanIdLong, token);
+        return new ResponseEntity<>(returnedLoan, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

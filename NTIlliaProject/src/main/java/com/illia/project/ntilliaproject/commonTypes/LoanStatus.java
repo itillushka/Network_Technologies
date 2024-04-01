@@ -5,5 +5,6 @@ public enum LoanStatus {
     REJECTED,
     APPROVED,
     RETURNED,
-    OVERDUE
+    OVERDUE,
+    PENDING_RETURN
 }

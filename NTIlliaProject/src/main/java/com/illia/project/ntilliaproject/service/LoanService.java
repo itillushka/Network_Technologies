@@ -1,5 +1,6 @@
 package com.illia.project.ntilliaproject.service;
 
+import com.illia.project.ntilliaproject.commonTypes.LoanStatus;
 import com.illia.project.ntilliaproject.controller.dto.loan.*;
 import com.illia.project.ntilliaproject.infrastructure.entity.LoanEntity;
 import com.illia.project.ntilliaproject.infrastructure.repository.BookRepository;
@@ -87,6 +88,25 @@ public class LoanService {
         loanEntity.setStatus(updateStatusDto.getStatus());
         loanRepository.save(loanEntity);
         return new UpdateStatusResponseDto(loanEntity.getLoanID(), loanEntity.getStatus());
+    }
+
+    public ReturnLoanResponseDto returnLoan(ReturnLoanDto returnLoanDto, long loanId, String token){
+        var loanEntity = loanRepository.findByloanID(loanId)
+                .orElseThrow(() -> new RuntimeException("Loan not found"));
+        System.out.println("Loan found");
+        if (loanEntity.getStatus() != LoanStatus.APPROVED) {
+            throw new RuntimeException("Loan is not borrowed");
+        }
+        System.out.println("Loan is borrowed");
+        Integer userID = jwtService.extractUserID(token);
+        if (loanEntity.getUser().getUserID() != userID) {
+            throw new RuntimeException("Loan does not belong to the user");
+        }
+        System.out.println("All criteria passed");
+        loanEntity.setReturnDate(returnLoanDto.getReturnDate());
+        loanEntity.setStatus(LoanStatus.PENDING_RETURN);
+        loanRepository.save(loanEntity);
+        return new ReturnLoanResponseDto(loanEntity.getLoanID(), loanEntity.getReturnDate(), loanEntity.getStatus());
     }
 
     public void delete(long id){
