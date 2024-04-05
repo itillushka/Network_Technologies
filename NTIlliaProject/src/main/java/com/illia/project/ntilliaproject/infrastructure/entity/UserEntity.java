@@ -1,9 +1,7 @@
 package com.illia.project.ntilliaproject.infrastructure.entity;
 
-import com.illia.project.ntilliaproject.commonTypes.UserRole;
 import jakarta.persistence.*;
 
-import java.util.List;
 
 @Entity
 @Table(name = "users", schema = "library")

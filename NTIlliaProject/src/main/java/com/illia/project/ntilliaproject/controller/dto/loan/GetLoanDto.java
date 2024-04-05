@@ -1,8 +1,5 @@
 package com.illia.project.ntilliaproject.controller.dto.loan;
 
-import com.illia.project.ntilliaproject.infrastructure.entity.BookEntity;
-import com.illia.project.ntilliaproject.infrastructure.entity.UserEntity;
-import jakarta.persistence.*;
 
 import java.util.Date;
 

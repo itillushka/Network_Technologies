@@ -6,13 +6,13 @@ public class GetReviewDto {
 
     private int reviewID;
 
-    private int rating;
+    private double rating;
 
     private String comment;
 
     private Date reviewDate;
 
-    public GetReviewDto(int reviewID, int rating, String comment, Date reviewDate) {
+    public GetReviewDto(int reviewID, double rating, String comment, Date reviewDate) {
         this.reviewID = reviewID;
         this.rating = rating;
         this.comment = comment;
@@ -27,11 +27,11 @@ public class GetReviewDto {
         this.reviewID = reviewID;
     }
 
-    public int getRating() {
+    public double getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(double rating) {
         this.rating = rating;
     }
 

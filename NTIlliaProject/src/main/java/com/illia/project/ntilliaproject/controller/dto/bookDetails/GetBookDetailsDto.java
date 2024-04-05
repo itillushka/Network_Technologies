@@ -1,7 +1,5 @@
 package com.illia.project.ntilliaproject.controller.dto.bookDetails;
 
-import com.illia.project.ntilliaproject.infrastructure.entity.BookEntity;
-import jakarta.persistence.*;
 
 public class GetBookDetailsDto {
 

@@ -1,16 +1,9 @@
 package com.illia.project.ntilliaproject.service;
 
-import com.illia.project.ntilliaproject.controller.dto.RegisterDto;
-import com.illia.project.ntilliaproject.controller.dto.RegisterResponseDto;
-import com.illia.project.ntilliaproject.controller.dto.user.CreateUserDto;
-import com.illia.project.ntilliaproject.controller.dto.user.CreateUserResponseDto;
+
 import com.illia.project.ntilliaproject.controller.dto.user.GetUserDto;
-import com.illia.project.ntilliaproject.infrastructure.entity.UserEntity;
 import com.illia.project.ntilliaproject.infrastructure.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

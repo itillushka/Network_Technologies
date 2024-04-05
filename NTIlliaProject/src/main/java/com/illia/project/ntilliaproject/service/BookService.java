@@ -4,7 +4,6 @@ package com.illia.project.ntilliaproject.service;
 import com.illia.project.ntilliaproject.controller.dto.book.CreateBookDto;
 import com.illia.project.ntilliaproject.controller.dto.book.CreateBookResponseDto;
 import com.illia.project.ntilliaproject.controller.dto.book.GetBookDto;
-import com.illia.project.ntilliaproject.infrastructure.entity.AuthEntity;
 import com.illia.project.ntilliaproject.infrastructure.entity.BookEntity;
 import com.illia.project.ntilliaproject.infrastructure.repository.BookRepository;
 import com.illia.project.ntilliaproject.service.error.BookISBNAlreadyExistsException;

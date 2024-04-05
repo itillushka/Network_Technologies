@@ -1,6 +1,5 @@
 package com.illia.project.ntilliaproject.controller.dto.user;
 
-import com.illia.project.ntilliaproject.commonTypes.UserRole;
 
 public class CreateUserDto {
     private String email;

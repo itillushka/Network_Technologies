@@ -5,9 +5,12 @@ import com.illia.project.ntilliaproject.controller.dto.loan.*;
 import com.illia.project.ntilliaproject.infrastructure.entity.LoanEntity;
 import com.illia.project.ntilliaproject.infrastructure.repository.BookRepository;
 import com.illia.project.ntilliaproject.infrastructure.repository.LoanRepository;
-import com.illia.project.ntilliaproject.infrastructure.repository.UserRepository;
+import com.illia.project.ntilliaproject.infrastructure.suplementary.Checkers;
+import com.illia.project.ntilliaproject.service.error.LoanNotBorrowedException;
+import com.illia.project.ntilliaproject.service.error.NoBooksAvailableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,18 +21,17 @@ public class LoanService {
     private final LoanRepository loanRepository;
     private final BookRepository bookRepository;
 
-    private  final UserRepository userRepository;
-
     private final JwtService jwtService;
+    private final Checkers checkers;
 
 
     // dependency injection
     @Autowired
-    public LoanService(LoanRepository loanRepository, BookRepository bookRepository, UserRepository userRepository, JwtService jwtService) {
+    public LoanService(LoanRepository loanRepository, BookRepository bookRepository, JwtService jwtService, Checkers checkers) {
         this.loanRepository = loanRepository;
         this.bookRepository = bookRepository;
-        this.userRepository = userRepository;
         this.jwtService = jwtService;
+        this.checkers = checkers;
     }
     public GetLoanDto getOne(long id){
         var loanEntity= loanRepository.findById(id).orElseThrow(() -> new RuntimeException("Loan not found"));
@@ -50,19 +52,15 @@ public class LoanService {
     }
 
     public CreateLoanResponseDto create(CreateLoanDto loan, String token){
-        var bookEntity = bookRepository.findBybookID(loan.getBookID())
-                .orElseThrow(() -> new RuntimeException("Book not found"));
-        System.out.println("Book found");
-
+        var bookEntity = checkers.checkIfBookExists(loan.getBookID());
         // extract user id from token
         Integer userID = jwtService.extractUserID(token);
         System.out.println(userID);
         // find user by userid
-        var userEntity = userRepository.findByuserID(userID)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        var userEntity = checkers.checkIfUserExists(userID);
 
         if (bookEntity.getAvailableCopies() <= 0) {
-            throw new RuntimeException("No copies of the book are available");
+            throw NoBooksAvailableException.create();
         }
 
         bookEntity.setAvailableCopies(bookEntity.getAvailableCopies() - 1);
@@ -82,34 +80,43 @@ public class LoanService {
                 newLoan.getReturnDate());
     }
 
+    @Transactional
     public UpdateStatusResponseDto updateStatus(UpdateStatusDto updateStatusDto, long loanId){
-        var loanEntity = loanRepository.findByloanID(loanId)
-                .orElseThrow(() -> new RuntimeException("Loan not found"));
+        var loanEntity = checkers.checkIfLoanExists(loanId);
         loanEntity.setStatus(updateStatusDto.getStatus());
         loanRepository.save(loanEntity);
         return new UpdateStatusResponseDto(loanEntity.getLoanID(), loanEntity.getStatus());
     }
 
-    public ReturnLoanResponseDto returnLoan(ReturnLoanDto returnLoanDto, long loanId, String token){
-        var loanEntity = loanRepository.findByloanID(loanId)
-                .orElseThrow(() -> new RuntimeException("Loan not found"));
-        System.out.println("Loan found");
-        if (loanEntity.getStatus() != LoanStatus.APPROVED) {
-            throw new RuntimeException("Loan is not borrowed");
-        }
-        System.out.println("Loan is borrowed");
+    @Transactional
+    public ReturnLoanResponseDto returnLoan(ReturnLoanDto returnLoanDto, String token){
         Integer userID = jwtService.extractUserID(token);
-        if (loanEntity.getUser().getUserID() != userID) {
-            throw new RuntimeException("Loan does not belong to the user");
+        System.out.println("userId" + userID);
+
+        var userEntity = checkers.checkIfUserExists(userID);
+
+        var bookEntity = checkers.checkIfBookExists(returnLoanDto.getBookId());
+
+        var loanEntity = checkers.checkIfLoanExistsByUserAndBook(userEntity.getUserID(), bookEntity.getBookID());
+
+
+        if (loanEntity.getStatus() != LoanStatus.APPROVED) {
+            throw LoanNotBorrowedException.create();
         }
 
-        var bookEntity = bookRepository.findBybookID(loanEntity.getBook().getBookID())
-                .orElseThrow(() -> new RuntimeException("Book not found"));
+        // Check if return date is after due date
+        if (returnLoanDto.getReturnDate().after(loanEntity.getDueDate())) {
+            loanEntity.setStatus(LoanStatus.OVERDUE);
+        } else {
+            loanEntity.setStatus(LoanStatus.PENDING_RETURN);
+        }
+
         bookEntity.setAvailableCopies(bookEntity.getAvailableCopies() + 1);
-        System.out.println("All criteria passed");
+        bookRepository.save(bookEntity);
+
         loanEntity.setReturnDate(returnLoanDto.getReturnDate());
-        loanEntity.setStatus(LoanStatus.PENDING_RETURN);
         loanRepository.save(loanEntity);
+
         return new ReturnLoanResponseDto(loanEntity.getLoanID(), loanEntity.getReturnDate(), loanEntity.getStatus());
     }
 

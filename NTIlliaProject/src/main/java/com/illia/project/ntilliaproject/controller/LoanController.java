@@ -56,11 +56,8 @@ public class LoanController {
         return new ResponseEntity<>(updatedLoan, HttpStatus.OK);
     }
 
-    @PostMapping("/{loanId}/return")
-    public ResponseEntity<ReturnLoanResponseDto> returnLoan(@RequestBody ReturnLoanDto returnLoanDto, @PathVariable String loanId, HttpServletRequest request){
-
-        var loanIdLong = Long.parseLong(loanId.substring(1, loanId.length() - 1));
-        System.out.println(loanIdLong);
+    @PostMapping("/return")
+    public ResponseEntity<ReturnLoanResponseDto> returnLoan(@RequestBody ReturnLoanDto returnLoanDto, HttpServletRequest request){
 
         //get token from header
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -70,7 +67,8 @@ public class LoanController {
         }
         System.out.println(token);
 
-        var returnedLoan = loanService.returnLoan(returnLoanDto, loanIdLong, token);
+        var returnedLoan = loanService.returnLoan(returnLoanDto, token);
+        System.out.println("Processed");
         return new ResponseEntity<>(returnedLoan, HttpStatus.OK);
     }
 

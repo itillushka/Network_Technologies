@@ -4,12 +4,12 @@ import java.util.Date;
 
 public class ReturnLoanDto {
 
-    private int loanId;
+    private int bookId;
 
     private Date returnDate;
 
-    public ReturnLoanDto(int loanId, Date returnDate) {
-        this.loanId = loanId;
+    public ReturnLoanDto(int bookId, Date returnDate) {
+        this.bookId = bookId;
         this.returnDate = returnDate;
     }
 
@@ -21,11 +21,11 @@ public class ReturnLoanDto {
         this.returnDate = returnDate;
     }
 
-    public int getLoanId() {
-        return loanId;
+    public int getBookId() {
+        return bookId;
     }
 
-    public void setLoanId(int loanId) {
-        this.loanId = loanId;
+    public void setBookId(int bookId) {
+        this.bookId = bookId;
     }
 }

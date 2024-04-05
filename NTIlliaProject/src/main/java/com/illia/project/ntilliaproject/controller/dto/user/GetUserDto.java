@@ -1,7 +1,5 @@
 package com.illia.project.ntilliaproject.controller.dto.user;
 
-import com.illia.project.ntilliaproject.commonTypes.UserRole;
-import jakarta.persistence.*;
 
 public class GetUserDto {
 
