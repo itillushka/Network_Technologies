@@ -22,9 +22,17 @@ public class LoanController {
         this.loanService = loanService;
     }
 
-    @GetMapping
-    public List<GetLoanDto> getAllLoans(){
-        return loanService.getAll();
+    @GetMapping("/all")
+    public List<GetLoanDto> getAllLoans(HttpServletRequest request){
+
+        //get token from header
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        //remove Bearer from token
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        return loanService.getAll(token);
     }
 
     @GetMapping("/{id}")
@@ -73,6 +81,7 @@ public class LoanController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable long id) {
         loanService.delete(id);
         return ResponseEntity.noContent().build();

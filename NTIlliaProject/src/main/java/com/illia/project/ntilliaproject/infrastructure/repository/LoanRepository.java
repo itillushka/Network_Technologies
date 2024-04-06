@@ -15,5 +15,6 @@ import java.util.Optional;
 public interface LoanRepository extends JpaRepository<LoanEntity, Long> {
     Optional<LoanEntity> findByloanID(long loanID);
     boolean existsByUserAndBook(UserEntity user, BookEntity book);
+    List<LoanEntity> findByUser_userID(Integer userID);
     Optional<LoanEntity> findByUser_userIDAndBook_bookID(Integer userID, Integer bookID);
 }

@@ -42,8 +42,9 @@ public class LoanService {
                 loanEntity.getReturnDate());
 
     }
-    public List<GetLoanDto> getAll(){
-        var loans= loanRepository.findAll();
+    public List<GetLoanDto> getAll(String token){
+        Integer userID = jwtService.extractUserID(token);
+        var loans= loanRepository.findByUser_userID(userID);
         return loans.stream().map((loan)-> new GetLoanDto(
                 loan.getLoanID(),
                 loan.getLoanDate(),

@@ -22,8 +22,8 @@ public class BookDetailsController {
         this.bookDetailsService = bookDetailsService;
     }
 
-    @GetMapping
-    public List<GetBookDetailsDto> getAllLoans(){
+    @GetMapping("/all")
+    public List<GetBookDetailsDto> getAllDetails(){
         return bookDetailsService.getAll();
     }
 
@@ -40,6 +40,7 @@ public class BookDetailsController {
         return new ResponseEntity<>(newBookDetail, HttpStatus.CREATED);
     }
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable String id) {
         var idLong = Long.parseLong(id.substring(1, id.length() - 1));
         bookDetailsService.delete(idLong);
