@@ -19,6 +19,9 @@ public class GetReviewDto {
         this.reviewDate = reviewDate;
     }
 
+    public GetReviewDto() {
+    }
+
     public int getReviewID() {
         return reviewID;
     }
@@ -51,6 +54,5 @@ public class GetReviewDto {
         this.reviewDate = reviewDate;
     }
 
-    public GetReviewDto() {
-    }
+
 }

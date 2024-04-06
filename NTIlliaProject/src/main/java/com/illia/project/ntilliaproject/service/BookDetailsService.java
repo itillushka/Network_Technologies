@@ -5,7 +5,6 @@ import com.illia.project.ntilliaproject.controller.dto.bookDetails.CreateBookDet
 import com.illia.project.ntilliaproject.controller.dto.bookDetails.GetBookDetailsDto;
 import com.illia.project.ntilliaproject.infrastructure.entity.BookDetailsEntity;
 import com.illia.project.ntilliaproject.infrastructure.repository.BookDetailsRepository;
-import com.illia.project.ntilliaproject.infrastructure.repository.BookRepository;
 import com.illia.project.ntilliaproject.infrastructure.suplementary.Checkers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,15 +16,12 @@ public class BookDetailsService {
 
     private final BookDetailsRepository bookDetailsRepository;
 
-    private final BookRepository bookRepository;
-
     private final Checkers checkers;
 
     // dependency injection
     @Autowired
-    public BookDetailsService(BookDetailsRepository bookDetailsRepository, BookRepository bookRepository, Checkers checkers) {
+    public BookDetailsService(BookDetailsRepository bookDetailsRepository, Checkers checkers) {
         this.bookDetailsRepository = bookDetailsRepository;
-        this.bookRepository = bookRepository;
         this.checkers = checkers;
     }
     public GetBookDetailsDto getOne(long id){

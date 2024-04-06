@@ -3,18 +3,13 @@ package com.illia.project.ntilliaproject.service;
 import com.illia.project.ntilliaproject.controller.dto.review.CreateReviewDto;
 import com.illia.project.ntilliaproject.controller.dto.review.CreateReviewResponseDto;
 import com.illia.project.ntilliaproject.controller.dto.review.GetReviewDto;
-import com.illia.project.ntilliaproject.infrastructure.entity.LoanEntity;
 import com.illia.project.ntilliaproject.infrastructure.entity.ReviewEntity;
-import com.illia.project.ntilliaproject.infrastructure.repository.BookRepository;
-import com.illia.project.ntilliaproject.infrastructure.repository.LoanRepository;
 import com.illia.project.ntilliaproject.infrastructure.repository.ReviewRepository;
-import com.illia.project.ntilliaproject.infrastructure.repository.UserRepository;
 import com.illia.project.ntilliaproject.infrastructure.suplementary.Checkers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

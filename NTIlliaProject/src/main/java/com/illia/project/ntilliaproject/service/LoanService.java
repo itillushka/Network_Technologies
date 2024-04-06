@@ -39,7 +39,8 @@ public class LoanService {
                 loanEntity.getLoanID(),
                 loanEntity.getLoanDate(),
                 loanEntity.getDueDate(),
-                loanEntity.getReturnDate());
+                loanEntity.getReturnDate(),
+                loanEntity.getStatus());
 
     }
     public List<GetLoanDto> getAll(String token){
@@ -49,7 +50,8 @@ public class LoanService {
                 loan.getLoanID(),
                 loan.getLoanDate(),
                 loan.getDueDate(),
-                loan.getReturnDate())).collect(Collectors.toList());
+                loan.getReturnDate(),
+                loan.getStatus())).collect(Collectors.toList());
     }
 
     public CreateLoanResponseDto create(CreateLoanDto loan, String token){
@@ -72,13 +74,11 @@ public class LoanService {
         loanEntity.setUser(userEntity);
         loanEntity.setLoanDate(loan.getLoanDate());
         loanEntity.setDueDate(loan.getDueDate());
-        loanEntity.setReturnDate(loan.getReturnDate());
         var newLoan= loanRepository.save(loanEntity);
         return new CreateLoanResponseDto(newLoan.getLoanID(),
                 userID,
                 newLoan.getLoanDate(),
-                newLoan.getDueDate(),
-                newLoan.getReturnDate());
+                newLoan.getDueDate());
     }
 
     @Transactional

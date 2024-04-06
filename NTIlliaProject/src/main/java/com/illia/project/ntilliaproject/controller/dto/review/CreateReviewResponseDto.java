@@ -18,6 +18,10 @@ public class CreateReviewResponseDto {
         this.reviewDate = reviewDate;
     }
 
+    public CreateReviewResponseDto() {
+
+    }
+
     public int getReviewID() {
         return reviewID;
     }
@@ -50,7 +54,5 @@ public class CreateReviewResponseDto {
         this.reviewDate = reviewDate;
     }
 
-    public CreateReviewResponseDto() {
 
-    }
 }

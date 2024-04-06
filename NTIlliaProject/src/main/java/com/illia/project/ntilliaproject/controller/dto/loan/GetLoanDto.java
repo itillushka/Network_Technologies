@@ -1,6 +1,8 @@
 package com.illia.project.ntilliaproject.controller.dto.loan;
 
 
+import com.illia.project.ntilliaproject.commonTypes.LoanStatus;
+
 import java.util.Date;
 
 public class GetLoanDto {
@@ -13,11 +15,14 @@ public class GetLoanDto {
 
     private Date returnDate;
 
-    public GetLoanDto(int loanID, Date loanDate, Date dueDate, Date returnDate) {
+    private LoanStatus status;
+
+    public GetLoanDto(int loanID, Date loanDate, Date dueDate, Date returnDate, LoanStatus status) {
         this.loanID = loanID;
         this.loanDate = loanDate;
         this.dueDate = dueDate;
         this.returnDate = returnDate;
+        this.status = status;
     }
 
     public GetLoanDto() {
@@ -53,5 +58,13 @@ public class GetLoanDto {
 
     public void setReturnDate(Date returnDate) {
         this.returnDate = returnDate;
+    }
+
+    public LoanStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(LoanStatus status) {
+        this.status = status;
     }
 }

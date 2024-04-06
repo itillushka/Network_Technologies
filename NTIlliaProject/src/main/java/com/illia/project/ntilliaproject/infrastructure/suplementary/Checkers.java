@@ -8,9 +8,7 @@ import com.illia.project.ntilliaproject.service.error.AlreadyExistsException;
 import com.illia.project.ntilliaproject.service.error.NotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.Optional;
 
 @Component
 public class Checkers {
@@ -37,39 +35,33 @@ public class Checkers {
     }
 
     public BookEntity checkIfBookExists(int bookId) {
-        var bookEntity = bookRepository.findBybookID(bookId)
+        return bookRepository.findBybookID(bookId)
                 .orElseThrow(() -> NotFoundException.create("Book"));
-        return bookEntity;
     }
 
     public UserEntity checkIfUserExists(int userID) {
-        var userEntity = userRepository.findByuserID(userID)
+        return userRepository.findByuserID(userID)
                 .orElseThrow(() -> NotFoundException.create("User"));
-        return userEntity;
     }
     @Transactional
     public LoanEntity checkIfLoanExists(long loanID) {
-        var loanEntity = loanRepository.findByloanID(loanID)
+        return loanRepository.findByloanID(loanID)
                 .orElseThrow(() -> new NotFoundException("Loan"));
-        return loanEntity;
     }
 
     public boolean checkIfLoanExistsByUserAndBook(UserEntity userEntity, BookEntity bookEntity){
-        boolean hasBorrowed = loanRepository.existsByUserAndBook(userEntity, bookEntity);
-        return hasBorrowed;
+        return loanRepository.existsByUserAndBook(userEntity, bookEntity);
     }
 
 
     public LoanEntity checkIfLoanExistsByUserAndBook(Integer userID, Integer bookID){
-        var loanEntity = loanRepository.findByUser_userIDAndBook_bookID(userID, bookID)
-                .orElseThrow(() -> NotFoundException.create("Loan"));
 
-        return loanEntity;
+        return loanRepository.findByUser_userIDAndBook_bookID(userID, bookID)
+                .orElseThrow(() -> NotFoundException.create("Loan"));
     }
 
 
     public boolean checkIfReviewExistsByUserAndBook(UserEntity userEntity, BookEntity bookEntity){
-        boolean hasReviewed = reviewRepository.existsByUserAndBook(userEntity, bookEntity);
-        return hasReviewed;
+        return reviewRepository.existsByUserAndBook(userEntity, bookEntity);
     }
 }

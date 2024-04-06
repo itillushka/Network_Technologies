@@ -1,6 +1,5 @@
 package com.illia.project.ntilliaproject.service.error;
 
-import com.illia.project.ntilliaproject.infrastructure.entity.LoanEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 

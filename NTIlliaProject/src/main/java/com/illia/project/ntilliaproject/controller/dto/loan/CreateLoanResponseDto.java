@@ -12,14 +12,12 @@ public class CreateLoanResponseDto {
 
     private Date dueDate;
 
-    private Date returnDate;
 
-    public CreateLoanResponseDto(int loanID, int userID, Date loanDate, Date dueDate, Date returnDate) {
+    public CreateLoanResponseDto(int loanID, int userID, Date loanDate, Date dueDate) {
         this.loanID = loanID;
         this.userID = userID;
         this.loanDate = loanDate;
         this.dueDate = dueDate;
-        this.returnDate = returnDate;
     }
 
     public CreateLoanResponseDto() {
@@ -47,10 +45,6 @@ public class CreateLoanResponseDto {
 
     public void setDueDate(Date dueDate) {
         this.dueDate = dueDate;
-    }
-
-    public Date getReturnDate() {
-        return returnDate;
     }
 
     public int getUserID() {

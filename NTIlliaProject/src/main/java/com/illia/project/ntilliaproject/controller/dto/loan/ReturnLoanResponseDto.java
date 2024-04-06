@@ -6,6 +6,19 @@ import java.util.Date;
 
 public class ReturnLoanResponseDto {
 
+    private int loanId;
+    private Date returnDate;
+    private LoanStatus status;
+
+    public ReturnLoanResponseDto(int loanId, Date returnDate, LoanStatus status) {
+        this.loanId = loanId;
+        this.returnDate = returnDate;
+        this.status = status;
+    }
+
+    public ReturnLoanResponseDto() {
+    }
+
     public int getLoanId() {
         return loanId;
     }
@@ -27,16 +40,6 @@ public class ReturnLoanResponseDto {
     }
 
     public void setStatus(LoanStatus status) {
-        this.status = status;
-    }
-
-    private int loanId;
-    private Date returnDate;
-    private LoanStatus status;
-
-    public ReturnLoanResponseDto(int loanId, Date returnDate, LoanStatus status) {
-        this.loanId = loanId;
-        this.returnDate = returnDate;
         this.status = status;
     }
 }

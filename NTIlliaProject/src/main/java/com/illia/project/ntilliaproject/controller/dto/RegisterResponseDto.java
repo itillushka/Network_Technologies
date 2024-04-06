@@ -6,7 +6,6 @@ public class RegisterResponseDto {
 
     private String username;
     private UserRole role;
-
     private long userID;
 
     public RegisterResponseDto(String username, UserRole role, long userID) {

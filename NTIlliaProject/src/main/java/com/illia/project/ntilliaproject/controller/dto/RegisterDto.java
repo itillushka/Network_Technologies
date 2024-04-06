@@ -6,10 +6,15 @@ public class RegisterDto {
 
     private String username;
     private String password;
-
     private UserRole role;
-
     private String email;
+
+    public RegisterDto(String username, String password, String email, UserRole role) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+    }
 
     public String getUsername() {
         return username;
@@ -43,10 +48,4 @@ public class RegisterDto {
         this.email = email;
     }
 
-    public RegisterDto(String username, String password, String email, UserRole role) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.role = role;
-    }
 }

@@ -16,6 +16,8 @@ public class CreateReviewDto {
         this.reviewDate = reviewDate;
     }
 
+    public CreateReviewDto() {
+    }
 
     public double getRating() {
         return rating;
@@ -41,6 +43,5 @@ public class CreateReviewDto {
         this.reviewDate = reviewDate;
     }
 
-    public CreateReviewDto() {
-    }
+
 }
