@@ -1,0 +1,25 @@
+body {
+  background-color: #F5F5DC; /* Beige */
+}
+
+.MuiAppBar-root {
+  background-color: #8B4513 !important; /* SaddleBrown */
+  color: #FDF5E6 !important; /* OldLace */
+}
+
+.MuiCard-root {
+  background-color: #DEB887 !important; /* BurlyWood */
+  color: #654321 !important; /* DarkBrown */
+}
+
+.book-cover {
+  width: 100%;
+  height: 440px;
+  object-fit: cover;
+}
+
+.container {
+  padding-top: 64px;
+  display: flex;
+  justify-content: center;
+}
