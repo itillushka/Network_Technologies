@@ -1,21 +1,22 @@
-import './Login-form.css';
-import { Button, TextField } from '@mui/material';
-import LoginIcon from '@mui/icons-material/Login';
+import React, { useMemo, useCallback } from 'react';
 import { Formik } from 'formik';
-import { useCallback, useMemo } from 'react';
 import * as yup from 'yup';
-
-type FormValues = {
-	username: string;
-	password: string;
-};
-
+import { TextField, Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import './Login-form.css';
 function LoginForm() {
-	const initialValues = { username: '', password: '' };
-	const submit = useCallback((values: FormValues, formik: any) => {
-		console.log(values);
-		formik.resetForm();
-	}, []);
+	const navigate = useNavigate();
+
+	const initialValues = useMemo(() => ({ username: '', password: '' }), []);
+
+	const handleSubmit = useCallback(
+		(values: any, formik: { resetForm: () => void }) => {
+			console.log(values);
+			formik.resetForm();
+			navigate('/home');
+		},
+		[navigate],
+	);
 
 	const validationSchema = useMemo(
 		() =>
@@ -32,47 +33,44 @@ function LoginForm() {
 	return (
 		<Formik
 			initialValues={initialValues}
-			onSubmit={submit}
+			onSubmit={handleSubmit}
 			validationSchema={validationSchema}
 			validateOnChange
 			validateOnBlur
 		>
-			{(formik: any) => (
+			{(formik) => (
 				<form
 					id="loginForm"
-					className="Login-form"
+					className="Login-form centered-form"
 					onSubmit={formik.handleSubmit}
 					noValidate
 				>
 					<TextField
 						id="username"
-						label="Username"
-						variant="outlined"
 						name="username"
+						label="Username"
+						value={formik.values.username}
 						onChange={formik.handleChange}
-						onBlur={formik.handleBlur}
-						error={formik.touched.username && !!formik.errors.username}
+						error={formik.touched.username && Boolean(formik.errors.username)}
 						helperText={formik.touched.username && formik.errors.username}
 					/>
 					<TextField
 						id="password"
+						name="password"
 						label="Password"
-						variant="outlined"
 						type="password"
+						value={formik.values.password}
 						onChange={formik.handleChange}
-						onBlur={formik.handleBlur}
-						error={formik.touched.password && !!formik.errors.password}
+						error={formik.touched.password && Boolean(formik.errors.password)}
 						helperText={formik.touched.password && formik.errors.password}
 					/>
 					<Button
+						color="primary"
 						variant="contained"
+						className="centered-button"
 						type="submit"
-						form="loginForm"
-						disabled={!formik.isValid && formik.dirty}
-						endIcon={<LoginIcon />}
 					>
-						{' '}
-						LogIn{' '}
+						Login
 					</Button>
 				</form>
 			)}
