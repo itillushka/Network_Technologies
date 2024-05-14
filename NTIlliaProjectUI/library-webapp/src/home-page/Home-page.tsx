@@ -8,7 +8,7 @@ const HomePage = () => {
     <div>
       <AppBar position="static" sx={{ flexGrow: 1 }}>
         <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" className="title">
             Digital Vintage Library
           </Typography>
           <Button color="inherit">
