@@ -1,14 +1,16 @@
 import React from 'react';
 import './App.css';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import LoginForm from './login-form/Login-form';
 import HomePage from './home-page/Home-page';
 import LoanPage from './loan-page/Loan-page';
 import BookPage from './book-page/Book-page';
+import ApiProvider from './api/ApiProvider';
 
 function App() {
 	return (
-			<Router>
+		<BrowserRouter>
+			<ApiProvider>
 					<div className="App">
 							<Routes>
 									<Route path="/login" element={<LoginForm />} />
@@ -17,7 +19,8 @@ function App() {
 									<Route path="/" element={<HomePage />} />
 							</Routes>
 					</div>
-			</Router>
+			</ApiProvider>
+		</BrowserRouter>
 	);
 }
 

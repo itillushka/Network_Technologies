@@ -4,8 +4,11 @@ import * as yup from 'yup';
 import { TextField, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import './Login-form.css';
+import axios from 'axios';
+import { useApi } from '../api/ApiProvider';
 function LoginForm() {
 	const navigate = useNavigate();
+	const apiClient = useApi();
 
 	const initialValues = useMemo(() => ({ username: '', password: '' }), []);
 
@@ -13,7 +16,22 @@ function LoginForm() {
 		(values: any, formik: { resetForm: () => void }) => {
 			console.log(values);
 			formik.resetForm();
-			navigate('/home');
+
+			apiClient.login(values).then((response) => {
+				console.log(response);
+				if (!response.success){
+					console.log("Login failed");
+					return;
+				}
+			});
+
+			/*const client = axios.create({
+				baseURL: 'http://localhost:8080/api',
+			});
+			client.post('/auth/login', values).then((response) => {
+          console.log(response.data);
+			});*/
+			navigate('/');
 		},
 		[navigate],
 	);
