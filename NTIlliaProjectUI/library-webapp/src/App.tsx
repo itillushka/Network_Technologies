@@ -5,6 +5,7 @@ import LoginForm from './login-form/Login-form';
 import HomePage from './home-page/Home-page';
 import LoanPage from './loan-page/Loan-page';
 import BookPage from './book-page/Book-page';
+import AdminPage from './admin-page/Admin-page';
 import ApiProvider from './api/ApiProvider';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
 									<Route path="/book" element={<BookPage />} />
 									<Route path="/loan" element={<LoanPage />} />
 									<Route path="/" element={<HomePage />} />
+									<Route path="/admin" element={<AdminPage />} />
 							</Routes>
 					</div>
 			</ApiProvider>

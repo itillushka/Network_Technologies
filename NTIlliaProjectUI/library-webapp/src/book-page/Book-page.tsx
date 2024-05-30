@@ -1,68 +1,53 @@
 import React, { useState, useEffect } from 'react';
-import kobzar from './kobzar.jpg';
-import witcher from './witcher.jpg';
-import witcher1 from './witcher1.jpg';
 import './Book-page.css';
 import { AppBar, Toolbar, Box, Card, CardMedia, CardContent, Typography, Collapse, TextField, Container, IconButton, Button } from '@mui/material';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
+import { LibraryClient } from '../api/library-client';
+import { BookResponseDto } from '../api/dto/book-response.dto';
+import kobzar from './kobzar.jpg';
+
+const libraryClient = new LibraryClient();
 
 const BookPage = () => {
   // Dummy data for books
-  const books = [
-    {
-      id: 1,
-      title: 'Book 1',
-      author: 'Author 1',
-      year: '2000',
-      isbn: '1234567890',
-      publisher: 'Publisher 1',
-      genre: 'Genre 1',
-      summary: 'Summary 1',
-      coverImage: kobzar,
-    },
-    {
-      id: 2,
-      title: 'Book 2',
-      author: 'Author 2',
-      year: '2020',
-      isbn: '1234567890',
-      publisher: 'Publisher 2',
-      genre: 'Genre 2',
-      summary: 'Summary 2',
-      coverImage: witcher,
-    },
-    {
-      id: 3,
-      title: 'Book 3',
-      author: 'Author 3',
-      year: '2021',
-      isbn: '1234567890',
-      publisher: 'Publisher 3',
-      genre: 'Genre 3',
-      summary: 'Summary 3',
-      coverImage: witcher1,
-    },
-    {
-      id: 4,
-      title: 'Book 4',
-      author: 'Author 4',
-      year: '2221',
-      isbn: '1234567890',
-      publisher: 'Publisher 4',
-      genre: 'Genre 4',
-      summary: 'Summary 4',
-      coverImage: witcher,
-    }
-    // Add more books as needed
-  ];
+  const [books, setBooks] = useState<BookResponseDto[]>([]);
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const response = await libraryClient.getAllBooks();
+
+        if (response.success) {
+            console.log('Unfiltered books:', response.data); // Output unfiltered books to console
+
+            const mappedBooks = response.data
+            .map((book: BookResponseDto) => ({
+              id: book.bookID,
+              year: book.yearPublished ? book.yearPublished : "No year",
+              isbn: book.ISBN ? book.ISBN : "No ISBN",
+              title: book.title ? book.title : "No title",
+              author: book.author ? book.author : "No author",
+              publisher: book.publisher ? book.publisher : "No publisher",
+              isAvailable: book.isAvailable ? book.isAvailable : "No availability",
+            }))
+          setBooks(mappedBooks);
+        } else {
+          console.error(`Failed to fetch books: ${response.status}`);
+        }
+      } catch (error) {
+        console.error(`Failed to fetch books: ${error}`);
+      }
+    };
+
+    fetchBooks().then(r => r);
+  }, []);
 
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [transitioning, setTransitioning] = useState(false);
 
-  const handleExpandClick = (id: number) => {
-    setExpandedId(expandedId === id ? null : id);
+  const handleExpandClick = (id: number | undefined) => {
+    setExpandedId(expandedId === id ? null : id || null);
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,15 +72,15 @@ const BookPage = () => {
     }, 500);
   };
 
-  const filteredBooks = books.filter((book) =>
-    book.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  /*const filteredBooks = books.filter((book) =>
+    book.title ? book.title.toLowerCase().includes(searchTerm.toLowerCase()) : false
+  );*/
 
   const displayBooks = [
     books[(currentIndex - 1 + books.length) % books.length],
     books[currentIndex],
     books[(currentIndex + 1) % books.length],
-  ];
+  ].filter(Boolean);
 
   return (
     <>
@@ -123,11 +108,11 @@ const BookPage = () => {
           </IconButton>
           <Box className={`wheel ${transitioning ? 'transitioning' : ''}`}>
             {displayBooks.map((book, index) => (
-              <Card className={`Card ${index === 1 ? 'center' : 'side'}`} key={book.id}>
+              <Card className={`Card ${index === 1 ? 'center' : 'side'}`} key={index}>
                 <CardMedia
                   component="img"
                   className="book-cover"
-                  image={book.coverImage}
+                  image={kobzar}
                   alt={book.title}
                 />
                 <CardContent>
@@ -138,17 +123,15 @@ const BookPage = () => {
                     {book.author}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {book.year}
+                    {book.yearPublished}
                   </Typography>
-                  <Button onClick={() => handleExpandClick(book.id)}>
-                    {expandedId === book.id ? 'Less' : 'More'}
+                  <Button onClick={() => handleExpandClick(book.bookID)}>
+                    {expandedId === book.bookID ? 'Less' : 'More'}
                   </Button>
-                  <Collapse in={expandedId === book.id} timeout="auto" unmountOnExit>
+                  <Collapse in={expandedId === book.bookID} timeout="auto" unmountOnExit>
                     <CardContent>
-                      <Typography paragraph>ISBN: {book.isbn}</Typography>
+                      <Typography paragraph>ISBN: {book.ISBN}</Typography>
                       <Typography paragraph>Publisher: {book.publisher}</Typography>
-                      <Typography paragraph>Genre: {book.genre}</Typography>
-                      <Typography paragraph>Summary: {book.summary}</Typography>
                     </CardContent>
                   </Collapse>
                 </CardContent>

@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import { LoginRequestDto } from './dto/login-request.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
+import { BookResponseDto } from './dto/book-response.dto';
 
 type ClientResponse = {
 	success: boolean;
@@ -37,4 +38,24 @@ export class LibraryClient {
 					};
 			}
 		}
+
+	public async getAllBooks(): Promise<ClientResponse> {
+		try {
+			const response: AxiosResponse<BookResponseDto[]> = await this.client.get('/books/all');
+
+			return {
+				success: true,
+				data: response.data,
+				status: response.status
+			};
+		} catch (error) {
+			const axiosError = error as AxiosError<Error>;
+
+			return {
+				success: false,
+				data: axiosError.response?.data,
+				status: axiosError.response?.status || 0
+			};
+		}
+	}
 	}

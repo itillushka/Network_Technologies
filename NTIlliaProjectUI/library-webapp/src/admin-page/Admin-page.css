@@ -1,0 +1,26 @@
+/* Admin-page.css */
+
+/* Style for the form container */
+.container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2rem;
+}
+
+/* Style for each form field */
+.container .MuiFormControl-root {
+  margin-bottom: 1rem;
+  width: 600px;
+}
+
+/* Style for the form heading */
+.container .MuiTypography-root {
+  margin-bottom: 1rem;
+}
+
+/* Style for the form itself */
+.container form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
