@@ -4,7 +4,7 @@ import { AppBar, Toolbar, Box, Card, CardMedia, CardContent, Typography, Collaps
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import { LibraryClient } from '../api/library-client';
 import { BookResponseDto } from '../api/dto/book-response.dto';
-import kobzar from './kobzar.jpg';
+import kobzar from '../admin-page/kobzar.jpg';
 
 const libraryClient = new LibraryClient();
 

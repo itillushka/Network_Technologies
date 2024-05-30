@@ -1,0 +1,23 @@
+.ListItem {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.LoanCard {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.loan-cover {
+    height: 300px;
+    width: 200px;
+    margin-right: 10px;
+}
