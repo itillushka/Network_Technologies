@@ -2,6 +2,7 @@ import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import { LoginRequestDto } from './dto/login-request.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
 import { BookResponseDto } from './dto/book-response.dto';
+import { RegisterUserRequestDto } from './dto/register-user-request.dto';
 
 type ClientResponse = {
 	success: boolean;
@@ -56,6 +57,19 @@ export class LibraryClient {
 				data: axiosError.response?.data,
 				status: axiosError.response?.status || 0
 			};
+		}
+	}
+
+
+	public async registerUser(data: RegisterUserRequestDto): Promise<number> {
+		try {
+			const response: AxiosResponse<LoginResponseDto> = await this.client.post('/auth/register', data);
+
+			this.client.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+			return response.status;
+		} catch (error) {
+			const axiosError = error as AxiosError<Error>;
+			return axiosError.response?.status || 0;
 		}
 	}
 	}

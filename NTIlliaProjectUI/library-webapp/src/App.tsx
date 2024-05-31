@@ -8,10 +8,13 @@ import BookPage from './book-page/Book-page';
 import AdminPage from './admin-page/Admin-page';
 import AdminLoanPage from './admin-page/AdminLoan-page';
 import ApiProvider from './api/ApiProvider';
+import { I18nextProvider } from 'react-i18next';
+import i18n from './i18n';
 
 function App() {
 	return (
 		<BrowserRouter>
+			<I18nextProvider i18n={i18n}>
 			<ApiProvider>
 					<div className="App">
 							<Routes>
@@ -24,6 +27,7 @@ function App() {
 							</Routes>
 					</div>
 			</ApiProvider>
+			</I18nextProvider>
 		</BrowserRouter>
 	);
 }

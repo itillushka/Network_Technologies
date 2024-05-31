@@ -5,8 +5,18 @@ import UserRegistrationForm from './UserRegistrationForm';
 import AddBookForm from './AddBookForm';
 import AddBookDetailsForm from './AddBookDetailsForm';
 import './Admin-page.css';
+import { LibraryClient } from '../api/library-client';
+import { RegisterUserRequestDto } from '../api/dto/register-user-request.dto';
 
 const AdminPage = () => {
+  const libraryClient = new LibraryClient();
+
+  const handleUserRegistration = async (values: RegisterUserRequestDto) => {
+    const status = await libraryClient.registerUser(values);
+    console.log(`User registration status: ${status}`);
+    // Handle the registration status here
+  };
+
   return (
     <>
       <AppBar position="static">
@@ -28,7 +38,7 @@ const AdminPage = () => {
           <Typography variant="h5" component="h2" gutterBottom>
             Register New User
           </Typography>
-          <UserRegistrationForm />
+          <UserRegistrationForm onSubmit={handleUserRegistration} />
         </Box>
         <Box mt={4} className="container">
           <Typography variant="h5" component="h2" gutterBottom>

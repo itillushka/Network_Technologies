@@ -2,14 +2,16 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Button, Container } from '@mui/material';
 import './Home-page.css'; // Import the CSS file
+import { useTranslation } from 'react-i18next';
 
 const HomePage = () => {
+  const {t, i18n} = useTranslation();
   return (
     <div>
       <AppBar position="static" sx={{ flexGrow: 1 }}>
         <Toolbar>
           <Typography variant="h6" className="title">
-            Digital Vintage Library
+            {t('library')}
           </Typography>
           <Button color="inherit">
             <Link to="/login" style={{ color: '#FDF5E6', textDecoration: 'none' }}>Login</Link>
