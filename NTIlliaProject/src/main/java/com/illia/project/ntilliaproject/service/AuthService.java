@@ -80,6 +80,7 @@ public class AuthService {
         String token = jwtService.generateToken(authEntity);
 
 
+
         return new LoginResponseDto(token);
     }
 }

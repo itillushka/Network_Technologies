@@ -45,7 +45,9 @@ public class BookDetailsService {
 
 
 
-    public CreateBookDetailsResponseDto create(CreateBookDetailsDto bookDetails, int bookId){
+    public CreateBookDetailsResponseDto create(CreateBookDetailsDto bookDetails){
+        var bookId = bookDetails.getBookId();
+
 
         var bookEntity = checkers.checkIfBookExists(bookId);
         checkers.checkIfBookDetailsExists(bookId);

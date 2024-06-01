@@ -1,12 +1,16 @@
-import { Formik } from 'formik';
+import { Formik, FormikHelpers } from 'formik';
 import * as yup from 'yup';
 import { TextField, Button } from '@mui/material';
 
-const AddBookForm = () => {
-  const initialValues = { ISBN: '', title: '', author: '', publisher: '', yearPublished: '', availableCopies: '' };
+interface CreateBookFormProps {
+  onSubmit: (values: { isbn: string; title: string; author: string; publisher: string; yearPublished: number; availableCopies: number;},
+             formikHelpers: FormikHelpers<{ isbn: string; title: string; author: string; publisher: string; yearPublished: number; availableCopies: number; }>) => void | Promise<void>;
+}
+const AddBookForm: React.FC<CreateBookFormProps> = ({ onSubmit }) => {
+  const initialValues = { isbn: '', title: '', author: '', publisher: '', yearPublished: 0, availableCopies: 0 };
 
   const validationSchema = yup.object().shape({
-    ISBN: yup.string().required('ISBN is required'),
+    isbn: yup.string().required('ISBN is required'),
     title: yup.string().required('Title is required'),
     author: yup.string().required('Author is required'),
     publisher: yup.string().required('Publisher is required'),
@@ -14,16 +18,11 @@ const AddBookForm = () => {
     availableCopies: yup.number().required('Available Copies is required').min(0, 'Available Copies must be at least 0'),
   });
 
-  const handleSubmit = (values: any) => {
-    console.log(values);
-    // Handle form submission here
-  };
-
   return (
-    <Formik initialValues={initialValues} onSubmit={handleSubmit} validationSchema={validationSchema}>
+    <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema}>
       {formik => (
         <form onSubmit={formik.handleSubmit}>
-          <TextField label="ISBN" {...formik.getFieldProps('ISBN')} />
+          <TextField label="ISBN" {...formik.getFieldProps('isbn')} />
           <TextField label="Title" {...formik.getFieldProps('title')} />
           <TextField label="Author" {...formik.getFieldProps('author')} />
           <TextField label="Publisher" {...formik.getFieldProps('publisher')} />

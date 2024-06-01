@@ -1,42 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import loanImage1 from './kobzar.jpg';
-import loanImage2 from './witcher.jpg';
-import loanImage3 from './witcher1.jpg';
 import './Loan-page.css';
 import { AppBar, Toolbar, Box, List, ListItem, CardMedia, ListItemText, Typography, Card, CardContent } from '@mui/material';
 import { Container } from '@mui/material';
+import { LibraryClient } from '../api/library-client';
+import { LoanResponseDto } from '../api/dto/loan-response.dto';
 
 const LoanPage = () => {
-  // Dummy data for loans
-  const loans = [
-    {
-      id: 1,
-      title: 'Loan 1',
-      coverImage: loanImage1,
-      loanDate: '2023-01-01',
-      returnDate: '2023-01-31',
-      dueDate: '2023-01-31',
-    },
-    {
-      id: 2,
-      title: 'Loan 2',
-      coverImage: loanImage2,
-      loanDate: '2023-02-01',
-      returnDate: '2023-02-28',
-      dueDate: '2023-02-28',
-    },
-    {
-      id: 3,
-      title: 'Loan 3',
-      coverImage: loanImage3,
-      loanDate: '2023-03-01',
-      returnDate: '2023-03-31',
-      dueDate: '2023-03-31',
-    },
-    // Add more loans as needed
-  ];
+  const [loans, setLoans] = useState<LoanResponseDto[]>([]);
+  const libraryClient = new LibraryClient();
 
-   return (
+  useEffect(() => {
+    const fetchLoans = async () => {
+      const response = await libraryClient.getAllLoans();
+      if (response.success) {
+        const loansWithCoverImage = response.data.map((loan: LoanResponseDto)=> ({ ...loan, coverImage: loanImage1 }));
+        setLoans(loansWithCoverImage);
+      }
+    };
+
+    fetchLoans();
+  }, []);
+
+  return (
     <>
       <AppBar position="static" className="AppBar">
         <Toolbar>
@@ -49,19 +35,19 @@ const LoanPage = () => {
         <Box mt={2}>
           <List>
             {loans.map((loan) => (
-              <ListItem key={loan.id}>
+              <ListItem key={loan.loanID}>
                 <Card className="LoanCard">
                   <CardMedia
                     component="img"
                     className="loan-cover"
-                    image={loan.coverImage}
-                    alt={loan.title}
+                    image={loanImage1}
+                    alt={"Book title"}
                     sx={{ height: 300, width: 200 }}
                   />
                   <CardContent>
                     <Box>
                       <ListItemText
-                        primary={loan.title}
+                        primary={`Loan ID: ${loan.loanID}`}
                       />
                     </Box>
                     <Box>
@@ -71,12 +57,17 @@ const LoanPage = () => {
                     </Box>
                     <Box>
                       <ListItemText
+                        secondary={`Due Date: ${loan.dueDate}`}
+                      />
+                    </Box>
+                    <Box>
+                      <ListItemText
                         secondary={`Return Date: ${loan.returnDate}`}
                       />
                     </Box>
                     <Box>
                       <ListItemText
-                        secondary={`Due Date: ${loan.dueDate}`}
+                        secondary={`Status: ${loan.status}`}
                       />
                     </Box>
                   </CardContent>
@@ -89,6 +80,5 @@ const LoanPage = () => {
     </>
   );
 };
-
 
 export default LoanPage;

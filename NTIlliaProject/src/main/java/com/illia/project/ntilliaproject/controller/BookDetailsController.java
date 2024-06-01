@@ -55,11 +55,10 @@ public class BookDetailsController {
      * @param bookDetail the DTO containing the book detail
      * @return CreateBookDetailsResponseDto the DTO containing the created book detail
      */
-    @PostMapping("/addDetails/{bookId}")
+    @PostMapping("/addDetails")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CreateBookDetailsResponseDto> create(@RequestBody CreateBookDetailsDto bookDetail, @PathVariable String bookId){
-        var bookIdInt = Integer.parseInt(bookId.substring(1, bookId.length() - 1));
-        var newBookDetail = bookDetailsService.create(bookDetail, bookIdInt);
+    public ResponseEntity<CreateBookDetailsResponseDto> create(@RequestBody CreateBookDetailsDto bookDetail){
+        var newBookDetail = bookDetailsService.create(bookDetail);
         return new ResponseEntity<>(newBookDetail, HttpStatus.CREATED);
     }
 

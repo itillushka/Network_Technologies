@@ -7,14 +7,43 @@ import AddBookDetailsForm from './AddBookDetailsForm';
 import './Admin-page.css';
 import { LibraryClient } from '../api/library-client';
 import { RegisterUserRequestDto } from '../api/dto/register-user-request.dto';
+import { CreateBookRequestDto } from '../api/dto/create-book-request.dto';
+import { AddBookDetailsRequestDto } from '../api/dto/add-book-details-request.dto';
 
 const AdminPage = () => {
   const libraryClient = new LibraryClient();
 
   const handleUserRegistration = async (values: RegisterUserRequestDto) => {
     const status = await libraryClient.registerUser(values);
-    console.log(`User registration status: ${status}`);
-    // Handle the registration status here
+    if (status === 201) {
+      alert('User created successfully');
+    } else if (status === 403) {
+      alert('You do not have permission to create a user');
+    } else {
+      alert(`User registration failed with status: ${status}`);
+    }
+  };
+
+  const handleCreateBook = async (values: CreateBookRequestDto) => {
+    const status = await libraryClient.createBook(values);
+    if (status === 201) {
+      alert('Book created successfully');
+    } else if (status === 403) {
+      alert('You do not have permission to create a book');
+    } else {
+      alert(`Book creation failed with status: ${status}`);
+    }
+  };
+
+  const handleAddBookDetails = async (values: AddBookDetailsRequestDto) => {
+    const status = await libraryClient.addBookDetails(values);
+    if (status === 201) {
+      alert('Book created successfully');
+    } else if (status === 403) {
+      alert('You do not have permission to create a book');
+    } else {
+      alert(`Book creation failed with status: ${status}`);
+    }
   };
 
   return (
@@ -44,13 +73,13 @@ const AdminPage = () => {
           <Typography variant="h5" component="h2" gutterBottom>
             Add New Book
           </Typography>
-          <AddBookForm />
+          <AddBookForm onSubmit={handleCreateBook}/>
         </Box>
         <Box mt={4} className="container">
           <Typography variant="h5" component="h2" gutterBottom>
             Add Book Details
           </Typography>
-          <AddBookDetailsForm />
+          <AddBookDetailsForm onSubmit={handleAddBookDetails}/>
         </Box>
       </Container>
     </>

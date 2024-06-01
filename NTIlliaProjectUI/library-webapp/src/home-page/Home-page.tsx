@@ -22,6 +22,12 @@ const HomePage = () => {
           <Button color="inherit">
             <Link to="/loan" style={{ color: '#FDF5E6', textDecoration: 'none' }}>Loans</Link>
           </Button>
+          <Button color="inherit">
+            <Link to="/admin" style={{ color: '#FDF5E6', textDecoration: 'none' }}>Admin</Link>
+          </Button>
+          <Button color="inherit">
+            <Link to="/adminLoan" style={{ color: '#FDF5E6', textDecoration: 'none' }}>Admin Loans</Link>
+          </Button>
         </Toolbar>
       </AppBar>
       <Container className="container">

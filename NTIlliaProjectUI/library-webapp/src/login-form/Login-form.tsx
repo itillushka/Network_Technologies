@@ -19,6 +19,7 @@ function LoginForm() {
 
 			apiClient.login(values).then((response) => {
 				console.log(response);
+				console.log(localStorage.getItem('token'));
 				if (!response.success){
 					console.log("Login failed");
 					return;
