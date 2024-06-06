@@ -1,6 +1,6 @@
 export class BookResponseDto {
   bookID: number | undefined;
-  ISBN: string | undefined;
+  isbn: string | undefined;
   title: string | undefined;
   author: string | undefined;
   publisher: string | undefined;

@@ -37,6 +37,7 @@ public class LoanService {
         var loanEntity= loanRepository.findById(id).orElseThrow(() -> new RuntimeException("Loan not found"));
         return new GetLoanDto(
                 loanEntity.getLoanID(),
+                loanEntity.getBook().getBookID(),
                 loanEntity.getLoanDate(),
                 loanEntity.getDueDate(),
                 loanEntity.getReturnDate(),
@@ -48,6 +49,18 @@ public class LoanService {
         var loans= loanRepository.findByUser_userID(userID);
         return loans.stream().map((loan)-> new GetLoanDto(
                 loan.getLoanID(),
+                loan.getBook().getBookID(),
+                loan.getLoanDate(),
+                loan.getDueDate(),
+                loan.getReturnDate(),
+                loan.getStatus())).collect(Collectors.toList());
+    }
+
+    public List<GetLoanDto> getAllAdmin(){
+        var loans= loanRepository.findAll();
+        return loans.stream().map((loan)-> new GetLoanDto(
+                loan.getLoanID(),
+                loan.getBook().getBookID(),
                 loan.getLoanDate(),
                 loan.getDueDate(),
                 loan.getReturnDate(),

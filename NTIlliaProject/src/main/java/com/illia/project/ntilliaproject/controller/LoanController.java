@@ -46,6 +46,12 @@ public class LoanController {
         return loanService.getAll(token);
     }
 
+    @GetMapping("/allAdmin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<GetLoanDto> getAllLoansAdmin(HttpServletRequest request){
+        return loanService.getAllAdmin();
+    }
+
     /**
      * Method to get a single loan by its ID.
      * @param id the ID of the loan
@@ -80,7 +86,7 @@ public class LoanController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UpdateStatusResponseDto> updateStatus(@RequestBody UpdateStatusDto updateStatusDto, @PathVariable String loanId){
 
-        var loanIdLong = Long.parseLong(loanId.substring(1, loanId.length() - 1));
+        var loanIdLong = Long.parseLong(loanId);
 
         var updatedLoan = loanService.updateStatus(updateStatusDto, loanIdLong);
         return new ResponseEntity<>(updatedLoan, HttpStatus.OK);

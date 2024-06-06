@@ -5,8 +5,11 @@ import { BookResponseDto } from './dto/book-response.dto';
 import { RegisterUserRequestDto } from './dto/register-user-request.dto';
 import { LoanResponseDto } from './dto/loan-response.dto';
 import { CreateBookRequestDto } from './dto/create-book-request.dto';
-import AddBookDetailsForm from '../admin-page/AddBookDetailsForm';
 import { AddBookDetailsRequestDto } from './dto/add-book-details-request.dto';
+import { DeleteBookRequestDto } from './dto/delete-book-details-request.dto';
+import { BookDetailsResponseDto } from './dto/book-details-response.dto';
+import { CreateLoanRequestDto } from './dto/create-loan-request.dto';
+import { LoanUpdateStatusDto } from './dto/loan-update-status.dto';
 
 type ClientResponse = {
 	success: boolean;
@@ -36,7 +39,7 @@ export class LibraryClient {
 				}
 				return{
 					success: true,
-					data: response.data.token,
+					data: response.data,
 					status: response.status
 				};
 				} catch (error) {
@@ -108,6 +111,25 @@ export class LibraryClient {
 		}
 	}
 
+	public async deleteBook(data: DeleteBookRequestDto): Promise<number> {
+		try {
+			const token = localStorage.getItem('token');
+			const axiosConfig = {
+				headers: {
+					'Authorization': 'Bearer ' + token
+				}
+			}
+			console.log(axiosConfig.headers.Authorization);
+			const response: AxiosResponse<LoginResponseDto> = await this.client.delete(`/books/${data.bookId}`, axiosConfig);
+
+			this.client.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+			return response.status;
+		} catch (error) {
+			const axiosError = error as AxiosError<Error>;
+			return axiosError.response?.status || 0;
+		}
+	}
+
 
 	public async registerUser(data: RegisterUserRequestDto): Promise<number> {
 		try {
@@ -151,6 +173,104 @@ export class LibraryClient {
 				data: axiosError.response?.data,
 				status: axiosError.response?.status || 0
 			};
+		}
+	}
+
+	public async getAllLoansAdmin(): Promise<ClientResponse> {
+		try {
+			const token = localStorage.getItem('token');
+			const axiosConfig = {
+				headers: {
+					'Authorization': 'Bearer ' + token
+				}
+			}
+
+			const response: AxiosResponse<LoanResponseDto[]> = await this.client.get('/loans/allAdmin', axiosConfig);
+
+			return {
+				success: true,
+				data: response.data,
+				status: response.status
+			};
+		} catch (error) {
+			const axiosError = error as AxiosError<Error>;
+
+			return {
+				success: false,
+				data: axiosError.response?.data,
+				status: axiosError.response?.status || 0
+			};
+		}
+	}
+
+	public async getBookDetail(bookId: number): Promise<ClientResponse> {
+		try {
+			const response: AxiosResponse<BookDetailsResponseDto> = await this.client.get(`/bookdetails/${bookId}`);
+			return {
+				success: true,
+				data: response.data,
+				status: response.status,
+			};
+		} catch (error) {
+			const axiosError = error as AxiosError<Error>;
+			if (axiosError.response?.status === 500) {
+				const defaultDetails: BookDetailsResponseDto = {
+					id: -1,
+					bookid: bookId,
+					genre: "No data",
+					summary: "No data",
+					coverImageURL:
+						"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNT0xwyLstvC7wH8jYIKur3GTcSq-g6fj2EbL4wk-qaONHYjBswa3rpFsZJeEjuXcG-lw&usqp=CAU",
+				};
+				return {
+					success: true,
+					data: defaultDetails,
+					status: 200,
+				};
+			}
+			return {
+				success: false,
+				data: axiosError.response?.data,
+				status: axiosError.response?.status || 500,
+			};
+		}
+	}
+
+	public async createLoan(data: CreateLoanRequestDto): Promise<number> {
+		try {
+			const token = localStorage.getItem('token');
+			const axiosConfig = {
+				headers: {
+					'Authorization': 'Bearer ' + token
+				}
+			}
+			console.log(axiosConfig.headers.Authorization);
+			const response: AxiosResponse<LoginResponseDto> = await this.client.post('/loans/newLoan', data, axiosConfig);
+
+			this.client.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+			return response.status;
+		} catch (error) {
+			const axiosError = error as AxiosError<Error>;
+			return axiosError.response?.status || 0;
+		}
+	}
+
+	public async updateLoan(data: LoanUpdateStatusDto, loanID: number): Promise<number> {
+		try {
+			const token = localStorage.getItem('token');
+			const axiosConfig = {
+				headers: {
+					'Authorization': 'Bearer ' + token
+				}
+			}
+			console.log(axiosConfig.headers.Authorization);
+			const response: AxiosResponse<LoginResponseDto> = await this.client.post(`/loans/${loanID}/status`, data, axiosConfig);
+
+			this.client.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+			return response.status;
+		} catch (error) {
+			const axiosError = error as AxiosError<Error>;
+			return axiosError.response?.status || 0;
 		}
 	}
 

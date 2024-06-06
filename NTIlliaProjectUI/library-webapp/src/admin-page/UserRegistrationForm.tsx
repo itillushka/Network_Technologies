@@ -1,7 +1,6 @@
 import { Formik, FormikHelpers } from 'formik';
 import * as yup from 'yup';
 import { TextField, Button, Select, MenuItem, Box } from '@mui/material';
-import { RegisterUserRequestDto } from '../api/dto/register-user-request.dto';
 
 interface UserRegistrationFormProps {
   onSubmit: (values: { username: string; password: string; role: string; email: string; }, formikHelpers: FormikHelpers<{ username: string; password: string; role: string; email: string; }>) => void | Promise<void>;
@@ -30,7 +29,10 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({ onSubmit })
             </Select>
           </Box>
           <TextField label="Email" {...formik.getFieldProps('email')} />
-          <Button type="submit">Register</Button>
+          <Button type="submit"
+                  color="primary"
+                  variant="contained"
+                  className="centered-button">Register</Button>
         </form>
       )}
     </Formik>

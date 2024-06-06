@@ -9,6 +9,8 @@ import { LibraryClient } from '../api/library-client';
 import { RegisterUserRequestDto } from '../api/dto/register-user-request.dto';
 import { CreateBookRequestDto } from '../api/dto/create-book-request.dto';
 import { AddBookDetailsRequestDto } from '../api/dto/add-book-details-request.dto';
+import { DeleteBookRequestDto } from '../api/dto/delete-book-details-request.dto';
+import DeleteBookForm from './DeleteBookForm';
 
 const AdminPage = () => {
   const libraryClient = new LibraryClient();
@@ -46,6 +48,17 @@ const AdminPage = () => {
     }
   };
 
+  const handleDeleteBook = async (values: DeleteBookRequestDto) => {
+    const status = await libraryClient.deleteBook(values);
+    if (status === 204) {
+      alert('Book deleted successfully');
+    } else if (status === 403) {
+      alert('You do not have permission to delete a book');
+    } else {
+      alert(`Book deletion failed with status: ${status}`);
+    }
+  };
+
   return (
     <>
       <AppBar position="static">
@@ -58,28 +71,34 @@ const AdminPage = () => {
         </Toolbar>
       </AppBar>
       <Container>
-        <Box mt={4} className="container">
+        <Box mt={5} className="container">
           <Typography variant="h4" component="h1" gutterBottom>
             Admin Page
           </Typography>
         </Box>
-        <Box mt={4} className="container">
+        <Box mt={5} className="container">
           <Typography variant="h5" component="h2" gutterBottom>
             Register New User
           </Typography>
           <UserRegistrationForm onSubmit={handleUserRegistration} />
         </Box>
-        <Box mt={4} className="container">
+        <Box mt={5} className="container">
           <Typography variant="h5" component="h2" gutterBottom>
             Add New Book
           </Typography>
           <AddBookForm onSubmit={handleCreateBook}/>
         </Box>
-        <Box mt={4} className="container">
+        <Box mt={5} className="container">
           <Typography variant="h5" component="h2" gutterBottom>
             Add Book Details
           </Typography>
           <AddBookDetailsForm onSubmit={handleAddBookDetails}/>
+        </Box>
+        <Box mt={5} className="container">
+          <Typography variant="h5" component="h2" gutterBottom>
+            Delete Book
+          </Typography>
+          <DeleteBookForm onSubmit={handleDeleteBook}/>
         </Box>
       </Container>
     </>

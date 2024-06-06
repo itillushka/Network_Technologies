@@ -1,35 +1,77 @@
 import React, { useState, useEffect } from 'react';
 import './Book-page.css';
-import { AppBar, Toolbar, Box, Card, CardMedia, CardContent, Typography, Collapse, TextField, Container, IconButton, Button } from '@mui/material';
-import { ArrowBack, ArrowForward } from '@mui/icons-material';
+import { Box, Card, CardMedia, CardContent, Typography, Collapse, Container, Button, Grid } from '@mui/material';
 import { LibraryClient } from '../api/library-client';
 import { BookResponseDto } from '../api/dto/book-response.dto';
-import kobzar from '../admin-page/kobzar.jpg';
+import AppBarComponent from '../components/AppBarComponent';
+import { BookDetailsResponseDto } from '../api/dto/book-details-response.dto';
+import { CreateLoanRequestDto } from '../api/dto/create-loan-request.dto';
 
 const libraryClient = new LibraryClient();
 
 const BookPage = () => {
-  // Dummy data for books
+
+  const handleBorrowClick = async (bookID: number) => {
+    const today = new Date();
+    const dueDate = new Date();
+    dueDate.setMonth(today.getMonth() + 1);
+
+    const loanRequest: CreateLoanRequestDto = {
+      bookID: bookID,
+      loanDate: today.toISOString().split('T')[0],
+      dueDate: dueDate.toISOString().split('T')[0],
+    };
+
+    try {
+      const response = await libraryClient.createLoan(loanRequest);
+      if (response === 201) {
+        alert('Loan created successfully ' + response);
+      } else {
+        alert('Failed to create loan ' + response);
+      }
+    } catch (error) {
+      alert('Failed to create loan: ' + error);
+    }
+  };
+
   const [books, setBooks] = useState<BookResponseDto[]>([]);
+  const [bookDetails, setBookDetails] = useState<BookDetailsResponseDto[]>([]);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
   useEffect(() => {
     const fetchBooks = async () => {
       try {
         const response = await libraryClient.getAllBooks();
 
         if (response.success) {
-            console.log('Unfiltered books:', response.data); // Output unfiltered books to console
+          console.log('Unfiltered books:', response.data); // Output unfiltered books to console
 
-            const mappedBooks = response.data
+          const mappedBooks = response.data
             .map((book: BookResponseDto) => ({
-              id: book.bookID,
-              year: book.yearPublished ? book.yearPublished : "No year",
-              isbn: book.ISBN ? book.ISBN : "No ISBN",
+              bookID: book.bookID,
+              yearPublished: book.yearPublished ? book.yearPublished : "No year",
+              isbn: book.isbn ? book.isbn : "No ISBN",
               title: book.title ? book.title : "No title",
               author: book.author ? book.author : "No author",
               publisher: book.publisher ? book.publisher : "No publisher",
               isAvailable: book.isAvailable ? book.isAvailable : "No availability",
-            }))
+            }));
+
           setBooks(mappedBooks);
+          console.log('Mapped books:', mappedBooks); // Output mapped books to console
+          // Fetch book details after setting books
+          const details = await Promise.all(mappedBooks.map(async (book: BookResponseDto) => {
+            if (book.bookID != null) {
+              try {
+                const detailResponse = await libraryClient.getBookDetail(book.bookID);
+                console.log('Unfiltered detail:', detailResponse.data);
+                return detailResponse.data;
+              } catch (error) {
+                console.error(`Failed to fetch details for book ${book.bookID}:`, error);
+              }
+            }
+          }));
+
+          setBookDetails(details);
         } else {
           console.error(`Failed to fetch books: ${response.status}`);
         }
@@ -40,107 +82,59 @@ const BookPage = () => {
 
     fetchBooks().then(r => r);
   }, []);
-
-  const [expandedId, setExpandedId] = useState<number | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [transitioning, setTransitioning] = useState(false);
-
   const handleExpandClick = (id: number | undefined) => {
     setExpandedId(expandedId === id ? null : id || null);
   };
-
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-  };
-
-  const nextBook = () => {
-    if (transitioning) return;
-    setTransitioning(true);
-    setTimeout(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % books.length);
-      setTransitioning(false);
-    }, 500);
-  };
-
-  const prevBook = () => {
-    if (transitioning) return;
-    setTransitioning(true);
-    setTimeout(() => {
-      setCurrentIndex((prevIndex) => (prevIndex - 1 + books.length) % books.length);
-      setTransitioning(false);
-    }, 500);
-  };
-
-  /*const filteredBooks = books.filter((book) =>
-    book.title ? book.title.toLowerCase().includes(searchTerm.toLowerCase()) : false
-  );*/
-
-  const displayBooks = [
-    books[(currentIndex - 1 + books.length) % books.length],
-    books[currentIndex],
-    books[(currentIndex + 1) % books.length],
-  ].filter(Boolean);
-
   return (
     <>
-      <AppBar position="static" className="AppBar">
-        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6" component="div">
-            My Book Store
-          </Typography>
-          <Box sx={{ backgroundColor: '#DEB887', borderRadius: '5px' }}>
-            <TextField
-              label="Search"
-              variant="outlined"
-              value={searchTerm}
-              onChange={handleSearchChange}
-              sx={{ marginLeft: 'auto' }}
-            />
-          </Box>
-          <Box sx={{ width: '10%' }} />
-        </Toolbar>
-      </AppBar>
+      <AppBarComponent />
       <Container className="container">
-        <Box mt={2} className="wheel-container">
-          <IconButton onClick={prevBook}>
-            <ArrowBack />
-          </IconButton>
-          <Box className={`wheel ${transitioning ? 'transitioning' : ''}`}>
-            {displayBooks.map((book, index) => (
-              <Card className={`Card ${index === 1 ? 'center' : 'side'}`} key={index}>
-                <CardMedia
-                  component="img"
-                  className="book-cover"
-                  image={kobzar}
-                  alt={book.title}
-                />
-                <CardContent>
-                  <Typography variant="h5" component="div">
-                    {book.title}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {book.author}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {book.yearPublished}
-                  </Typography>
-                  <Button onClick={() => handleExpandClick(book.bookID)}>
-                    {expandedId === book.bookID ? 'Less' : 'More'}
-                  </Button>
-                  <Collapse in={expandedId === book.bookID} timeout="auto" unmountOnExit>
-                    <CardContent>
-                      <Typography paragraph>ISBN: {book.ISBN}</Typography>
-                      <Typography paragraph>Publisher: {book.publisher}</Typography>
-                    </CardContent>
-                  </Collapse>
-                </CardContent>
-              </Card>
+        <Box>
+          <Grid container justifyContent="center" spacing={2} className="book-list">
+            {books.map((book, index) => (
+              <Grid item xs={12} sm={4} md={4} lg={4} key={index}>
+                <Card className="Card">
+                  <CardMedia
+                    component="img"
+                    className="book-cover"
+                    image={bookDetails.find(detail => detail.bookid === book.bookID)?.coverImageURL}
+                    alt={book.title}
+                  />
+                  <CardContent>
+                    <Typography variant="h5" component="div">
+                      {book.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {book.author}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {book.yearPublished}
+                    </Typography>
+                    <Button onClick={() => handleExpandClick(book.bookID)}>
+                      {expandedId === book.bookID ? 'Less' : 'More'}
+                    </Button>
+                    <Collapse in={expandedId === book.bookID} timeout="auto" unmountOnExit>
+                      <CardContent>
+                        <Typography paragraph>ISBN: {book.isbn}</Typography>
+                        <Typography paragraph>Publisher: {book.publisher}</Typography>
+                        <Typography
+                          paragraph>Genre: {bookDetails.find(detail => detail.bookid === book.bookID)?.genre}</Typography>
+                        <Typography
+                          paragraph>Summary: {bookDetails.find(detail => detail.bookid === book.bookID)?.summary}</Typography>
+                        <Button
+                          type="submit"
+                          color="primary"
+                          variant="contained"
+                          className="centered-button"
+                          onClick={() => handleBorrowClick(typeof book.bookID === 'number' ? book.bookID :-1)}> Borrow
+                        </Button>
+                      </CardContent>
+                    </Collapse>
+                  </CardContent>
+                </Card>
+              </Grid>
             ))}
-          </Box>
-          <IconButton onClick={nextBook}>
-            <ArrowForward />
-          </IconButton>
+          </Grid>
         </Box>
       </Container>
       <Box className="footer">

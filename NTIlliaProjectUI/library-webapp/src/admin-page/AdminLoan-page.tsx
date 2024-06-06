@@ -1,81 +1,85 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import loanImage1 from './kobzar.jpg';
-import loanImage2 from './witcher.jpg';
-import loanImage3 from './witcher1.jpg';
 import './AdminLoan-page.css';
 import { AppBar, Toolbar, Box, List, ListItem, CardMedia, ListItemText, Typography, Card, CardContent, Select, MenuItem, Button } from '@mui/material';
 import { Container } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material';
+import { LoanResponseDto } from '../api/dto/loan-response.dto';
+import { LibraryClient } from '../api/library-client';
+import { Link } from 'react-router-dom';
 
 const AdminLoanPage = () => {
-  // Dummy data for loans
-  const loans = [
-    {
-      id: 1,
-      title: 'Loan 1',
-      coverImage: loanImage1,
-      loanDate: '2023-01-01',
-      returnDate: '2023-01-31',
-      dueDate: '2023-01-31',
-      status: 'PENDING',
-    },
-    {
-      id: 2,
-      title: 'Loan 2',
-      coverImage: loanImage2,
-      loanDate: '2023-02-01',
-      returnDate: '2023-02-28',
-      dueDate: '2023-02-28',
-      status: 'APPROVED',
-    },
-    {
-      id: 3,
-      title: 'Loan 3',
-      coverImage: loanImage3,
-      loanDate: '2023-03-01',
-      returnDate: '2023-03-31',
-      dueDate: '2023-03-31',
-      status: 'REJECTED',
-    },
-    // Add more loans as needed
-  ];
+  const [loans, setLoans] = useState<LoanResponseDto[]>([]);
+  const libraryClient = new LibraryClient();
+
+  const handleConfirmClick = async (loanId: number) => {
+    const loanToUpdate = loans.find(loan => loan.loanID === loanId);
+    if (!loanToUpdate) {
+      console.error(`Loan with ID ${loanId} not found`);
+      return;
+    }
+
+    const updateLoanRequest = {
+      status: loanToUpdate.status,
+    };
+
+    try {
+      const response = await libraryClient.updateLoan(updateLoanRequest, loanId)
+      if (response === 200) {
+        console.log(`Loan with ID ${loanId} updated successfully`);
+      } else {
+        console.error(`Failed to update loan with ID ${loanId}`);
+      }
+    } catch (error) {
+      console.error(`Failed to update loan with ID ${loanId}:`, error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchLoans = async () => {
+      const response = await libraryClient.getAllLoansAdmin();
+      if (response.success) {
+        const loansWithCoverImage = response.data.map((loan: LoanResponseDto)=> ({ ...loan, coverImage: loanImage1 }));
+        setLoans(loansWithCoverImage);
+      }
+    };
+
+    fetchLoans();
+  }, []);
 
   const handleStatusChange = (event: SelectChangeEvent<string>, loanId: number) => {
-    console.log(`Status for loan ${loanId} changed to ${event.target.value}`);
-    // Handle status change here
-  };
-
-  const handleConfirmClick = (loanId: number) => {
-    console.log(`Confirm clicked for loan ${loanId}`);
-    // Handle confirm click here
-  };
+  const newStatus = event.target.value;
+  setLoans(loans.map(loan => loan.loanID === loanId ? { ...loan, status: newStatus } : loan));
+};
 
   return (
     <>
-      <AppBar position="static" className="AppBar">
+      <AppBar position="static">
         <Toolbar>
-          <Typography variant="h6" component="div">
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Admin Loan Management
           </Typography>
+          <Button color="inherit" component={Link} to="/admin">Admin Console</Button>
+          <Button color="inherit" component={Link} to="/adminloan">Loan Management</Button>
         </Toolbar>
       </AppBar>
       <Container className="container">
         <Box mt={2}>
           <List>
             {loans.map((loan) => (
-              <ListItem key={loan.id}>
+              <ListItem key={loan.loanID}>
                 <Card className="LoanCard">
                   <CardMedia
                     component="img"
                     className="loan-cover"
-                    image={loan.coverImage}
-                    alt={loan.title}
+                    image={loanImage1}
+                    alt={"Book title"}
                     sx={{ height: 300, width: 200 }}
                   />
                   <CardContent>
                     <Box>
                       <ListItemText
-                        primary={loan.title}
+                        primary={loan.loanID}
                       />
                     </Box>
                     <Box>
@@ -96,7 +100,7 @@ const AdminLoanPage = () => {
                     <Box>
                       <Select
                         value={loan.status}
-                        onChange={(event) => handleStatusChange(event, loan.id)}
+                        onChange={(event) => handleStatusChange(event, typeof loan.loanID === 'number' ? loan.loanID :0)}
                       >
                         <MenuItem value="PENDING">PENDING</MenuItem>
                         <MenuItem value="REJECTED">REJECTED</MenuItem>
@@ -105,7 +109,7 @@ const AdminLoanPage = () => {
                         <MenuItem value="OVERDUE">OVERDUE</MenuItem>
                         <MenuItem value="PENDING_RETURN">PENDING_RETURN</MenuItem>
                       </Select>
-                      <Button onClick={() => handleConfirmClick(loan.id)}>Confirm</Button>
+                      <Button onClick={() => handleConfirmClick(typeof loan.loanID === 'number' ? loan.loanID :0)}>Confirm</Button>
                     </Box>
                   </CardContent>
                 </Card>

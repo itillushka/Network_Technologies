@@ -24,10 +24,11 @@ public class BookDetailsService {
         this.bookDetailsRepository = bookDetailsRepository;
         this.checkers = checkers;
     }
-    public GetBookDetailsDto getOne(long id){
-        var bookDetailsEntity = bookDetailsRepository.findById(id).orElseThrow(() -> new RuntimeException("BookDetails not found"));
+    public GetBookDetailsDto getOne(int id){
+        var bookDetailsEntity = bookDetailsRepository.findBybook_bookID(id).orElseThrow(() -> new RuntimeException("BookDetails not found"));
         return new GetBookDetailsDto(
                 bookDetailsEntity.getId(),
+                bookDetailsEntity.getBook().getBookID(),
                 bookDetailsEntity.getGenre(),
                 bookDetailsEntity.getSummary(),
                 bookDetailsEntity.getCoverImageURL());
@@ -38,6 +39,7 @@ public class BookDetailsService {
         var bookDetails = bookDetailsRepository.findAll();
         return bookDetails.stream().map((bookDetailsEntity)-> new GetBookDetailsDto(
                 bookDetailsEntity.getId(),
+                bookDetailsEntity.getBook().getBookID(),
                 bookDetailsEntity.getGenre(),
                 bookDetailsEntity.getSummary(),
                 bookDetailsEntity.getCoverImageURL())).collect(java.util.stream.Collectors.toList());

@@ -5,14 +5,17 @@ public class GetBookDetailsDto {
 
     private Long id;
 
+    private Integer bookid;
+
     private String genre;
 
     private String summary;
 
     private String coverImageURL;
 
-    public GetBookDetailsDto(Long id, String genre, String summary, String coverImageURL) {
+    public GetBookDetailsDto(Long id, Integer bookid, String genre, String summary, String coverImageURL) {
         this.id = id;
+        this.bookid = bookid;
         this.genre = genre;
         this.summary = summary;
         this.coverImageURL = coverImageURL;
@@ -27,6 +30,14 @@ public class GetBookDetailsDto {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Integer getbookid() {
+        return bookid;
+    }
+
+    public void setbookid(Integer bookid) {
+        this.bookid = bookid;
     }
 
     public String getGenre() {

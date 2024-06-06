@@ -46,8 +46,9 @@ public class BookDetailsController {
      * @return GetBookDetailsDto the DTO containing the book detail
      */
     @GetMapping("/{id}")
-    public GetBookDetailsDto getOne(@PathVariable long id){
-        return bookDetailsService.getOne(id);
+    public GetBookDetailsDto getOne(@PathVariable String id){
+        var idInt = Integer.parseInt(id);
+        return bookDetailsService.getOne(idInt);
     }
 
     /**
