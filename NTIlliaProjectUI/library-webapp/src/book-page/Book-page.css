@@ -55,11 +55,18 @@ button:hover {
 }
 
 .book-cover {
-  width: 50%;
-  height: 50%;
+  width: 20%;
+  height: 20%;
 }
 
 .container {
   display: flex;
   flex-wrap: wrap;
+}
+.MuiButton-root {
+  background-color: #8B4513 !important; /* DarkBrown */
+}
+
+.submitButton {
+  color: white !important;
 }

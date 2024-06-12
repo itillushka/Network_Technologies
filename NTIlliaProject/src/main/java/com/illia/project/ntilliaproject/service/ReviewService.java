@@ -29,19 +29,21 @@ public class ReviewService {
         this.jwtService = jwtService;
         this.checkers = checkers;
     }
-    public GetReviewDto getOne(long id){
-        var reviewEntity = reviewRepository.findById(id).orElseThrow(() -> new RuntimeException("Review not found"));
-        return new GetReviewDto(
-                reviewEntity.getReviewID(),
-                reviewEntity.getRating(),
-                reviewEntity.getComment(),
-                reviewEntity.getReviewDate());
+    public List<GetReviewDto> getOne(int id){
+        var reviews = reviewRepository.findBybook_bookID(id);
+        return reviews.stream().map((review)-> new GetReviewDto(
+                review.getReviewID(),
+                review.getBook().getBookID(),
+                review.getRating(),
+                review.getComment(),
+                review.getReviewDate())).collect(Collectors.toList());
 
     }
     public List<GetReviewDto> getAll(){
         var users = reviewRepository.findAll();
         return users.stream().map((review)-> new GetReviewDto(
                 review.getReviewID(),
+                review.getBook().getBookID(),
                 review.getRating(),
                 review.getComment(),
                 review.getReviewDate())).collect(Collectors.toList());

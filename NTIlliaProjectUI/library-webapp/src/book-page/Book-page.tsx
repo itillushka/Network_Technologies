@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import './Book-page.css';
-import { Box, Card, CardMedia, CardContent, Typography, Collapse, Container, Button, Grid } from '@mui/material';
+import { Box, Card, CardMedia, CardContent, Typography, Collapse, Container, Button, Grid, Rating } from '@mui/material';
 import { LibraryClient } from '../api/library-client';
 import { BookResponseDto } from '../api/dto/book-response.dto';
 import AppBarComponent from '../components/AppBarComponent';
 import { BookDetailsResponseDto } from '../api/dto/book-details-response.dto';
 import { CreateLoanRequestDto } from '../api/dto/create-loan-request.dto';
+import { useTranslation } from 'react-i18next';
 
 const libraryClient = new LibraryClient();
 
 const BookPage = () => {
+
+  const {t, i18n} = useTranslation();
+
 
   const handleBorrowClick = async (bookID: number) => {
     const today = new Date();
@@ -37,6 +41,8 @@ const BookPage = () => {
   const [books, setBooks] = useState<BookResponseDto[]>([]);
   const [bookDetails, setBookDetails] = useState<BookDetailsResponseDto[]>([]);
   const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [reviews, setReviews] = useState<any[]>([]);
+
   useEffect(() => {
     const fetchBooks = async () => {
       try {
@@ -57,6 +63,7 @@ const BookPage = () => {
             }));
 
           setBooks(mappedBooks);
+
           console.log('Mapped books:', mappedBooks); // Output mapped books to console
           // Fetch book details after setting books
           const details = await Promise.all(mappedBooks.map(async (book: BookResponseDto) => {
@@ -80,8 +87,26 @@ const BookPage = () => {
       }
     };
 
-    fetchBooks().then(r => r);
-  }, []);
+    const fetchReviews = async () => {
+      const reviews = await Promise.all(books.map(async (book: BookResponseDto) => {
+        if (book.bookID != null) {
+          try {
+            const reviewResponse = await libraryClient.getReviews(book.bookID);
+            console.log('Reviews:', reviewResponse.data);
+            return { bookId: book.bookID, data: reviewResponse.data };
+          } catch (error) {
+            console.error(`Failed to fetch reviews for book ${book.bookID}:`, error);
+          }
+        }
+      }));
+
+      console.log('Fetched reviews:', reviews); // Add a console log here to check the fetched reviews
+
+      setReviews(reviews);
+    };
+
+    fetchBooks().then(() => fetchReviews());
+  }, [books]);
   const handleExpandClick = (id: number | undefined) => {
     setExpandedId(expandedId === id ? null : id || null);
   };
@@ -110,23 +135,37 @@ const BookPage = () => {
                     <Typography variant="body2" color="text.secondary">
                       {book.yearPublished}
                     </Typography>
-                    <Button onClick={() => handleExpandClick(book.bookID)}>
-                      {expandedId === book.bookID ? 'Less' : 'More'}
+                    <Typography>
+                    <Rating
+                      name="book-rating"
+                      value={
+                        reviews.find(review => review.bookId === book.bookID)
+                          ? reviews.find(review => review.bookId === book.bookID)?.data.reduce((a: any, b: { rating: any; }) => a + b.rating, 0) / reviews.find(review => review.bookId === book.bookID)?.data.length
+                          : 0
+                      }
+                      readOnly
+                      precision={0.5}
+                    />
+                    </Typography>
+                    <Button onClick={() => handleExpandClick(book.bookID)} className="submitButton">
+                      {expandedId === book.bookID ? t('Less') : t('More')}
                     </Button>
                     <Collapse in={expandedId === book.bookID} timeout="auto" unmountOnExit>
                       <CardContent>
-                        <Typography paragraph>ISBN: {book.isbn}</Typography>
-                        <Typography paragraph>Publisher: {book.publisher}</Typography>
+                        <Typography paragraph>{t('ISBN')}{book.isbn}</Typography>
+                        <Typography paragraph>{t('Publisher')}{book.publisher}</Typography>
                         <Typography
-                          paragraph>Genre: {bookDetails.find(detail => detail.bookid === book.bookID)?.genre}</Typography>
+                          paragraph>{t('Genre')}{bookDetails.find(detail => detail.bookid === book.bookID)?.genre}</Typography>
                         <Typography
-                          paragraph>Summary: {bookDetails.find(detail => detail.bookid === book.bookID)?.summary}</Typography>
+                          paragraph>{t('Summary')}{bookDetails.find(detail => detail.bookid === book.bookID)?.summary}</Typography>
+                        <Typography
+                          paragraph>{t('Last comment')}{reviews.find(review => review.bookId === book.bookID)?.data[reviews.find(review => review.bookId === book.bookID)?.data.length - 1]?.comment || "No comments yet"}</Typography>
                         <Button
                           type="submit"
                           color="primary"
                           variant="contained"
                           className="centered-button"
-                          onClick={() => handleBorrowClick(typeof book.bookID === 'number' ? book.bookID :-1)}> Borrow
+                          onClick={() => handleBorrowClick(typeof book.bookID === 'number' ? book.bookID :-1)}>{t('Borrow')}
                         </Button>
                       </CardContent>
                     </Collapse>
@@ -138,7 +177,7 @@ const BookPage = () => {
         </Box>
       </Container>
       <Box className="footer">
-        <Typography variant="body1">My Book Store © 2024</Typography>
+        <Typography variant="body1">{t('My Book Store')} © 2024</Typography>
       </Box>
     </>
   );

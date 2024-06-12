@@ -51,8 +51,9 @@ public class ReviewController {
      * @return GetReviewDto the DTO containing the review
      */
     @GetMapping("/{id}")
-    public GetReviewDto getOne(@PathVariable long id){
-        return reviewService.getOne(id);
+    public List<GetReviewDto> getOne(@PathVariable String id){
+        var bookIdInt = Integer.parseInt(id);
+        return reviewService.getOne(bookIdInt);
     }
 
     /**
@@ -63,11 +64,13 @@ public class ReviewController {
     @PostMapping("{bookId}/leftReview")
     public ResponseEntity<CreateReviewResponseDto> create(@RequestBody CreateReviewDto review, @PathVariable String bookId, HttpServletRequest request){
 
-        var bookIdInt = Integer.parseInt(bookId.substring(1, bookId.length() - 1));
+        var bookIdInt = Integer.parseInt(bookId);
 
         //get token from header
         String token = processToken.getToken(request);
-
+        System.out.println(request);
+        System.out.println(token);
+        System.out.println(bookIdInt);
         var newReview = reviewService.create(review, token, bookIdInt);
         return new ResponseEntity<>(newReview, HttpStatus.CREATED);
     }

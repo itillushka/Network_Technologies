@@ -1,15 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import './Loan-page.css';
-import { Box, List, ListItem, CardMedia, ListItemText, Card, CardContent } from '@mui/material';
+import {
+  Box,
+  List,
+  ListItem,
+  CardMedia,
+  ListItemText,
+  Card,
+  CardContent,
+  Button,
+  CardActions,
+  Modal,
+  TextField,
+  Rating
+} from '@mui/material';
 import { Container } from '@mui/material';
 import { LibraryClient } from '../api/library-client';
 import { LoanResponseDto } from '../api/dto/loan-response.dto';
 import AppBarComponent from '../components/AppBarComponent';
 import { BookResponseDto } from '../api/dto/book-response.dto';
+import { ReturnLoanRequestDto } from '../api/dto/return-loan-request.dto';
+import { ReviewCreateRequestDto } from '../api/dto/review-create-request.dto';
+import { useTranslation } from 'react-i18next';
 
 const LoanPage = () => {
+  const {t, i18n} = useTranslation();
   const [loans, setLoans] = useState<LoanResponseDto[]>([]);
   const [books, setBooks] = useState<BookResponseDto[]>([]);
+
+  const [open, setOpen] = useState(false);
+  const [comment, setComment] = useState('');
+  const [rating, setRating] = useState(0);
+  const [selectedBookId, setSelectedBookId] = useState<number | null>(null);
+
   const libraryClient = new LibraryClient();
 
   useEffect(() => {
@@ -44,11 +67,79 @@ const LoanPage = () => {
     fetchData();
   }, []);
 
+  const handleAddReviewClick = (bookId: number) => {
+    setSelectedBookId(bookId);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleFormSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (selectedBookId !== null) {
+      const reviewRequest = new ReviewCreateRequestDto();
+      reviewRequest.comment = comment;
+      reviewRequest.rating = rating;
+      reviewRequest.reviewDate = new Date().toISOString().split('T')[0];
+
+      const response = await libraryClient.createReview(reviewRequest, selectedBookId);
+      if (response === 201) {
+        alert('Review added successfully.');
+      } else {
+        alert(`Failed to add review.${response}`);
+        console.log(`Failed to add review.${reviewRequest.comment, reviewRequest.rating, reviewRequest.reviewDate, selectedBookId}`)
+      }
+    }
+    handleClose();
+  };
+
+  const handleReturnClick = async (bookId: number) => {
+  const returnLoanRequest = new ReturnLoanRequestDto();
+  returnLoanRequest.bookId = bookId;
+  returnLoanRequest.returnDate = new Date().toISOString().split('T')[0]; // get today's date in YYYY-MM-DD format
+
+  const response = await libraryClient.returnLoan(returnLoanRequest);
+  if (response === 200) {
+    alert(`Book with ID: ${bookId} returned successfully.`);
+  } else if (response === 409) {
+    alert(`Failed to return book because it is not yet approved`);
+  } else {
+    alert(`Failed to return book with ID: ${bookId}.`);
+  }
+};
+
   return (
     <>
       <AppBarComponent />
+      <Modal
+        open={open}
+        onClose={handleClose}
+      >
+        <form onSubmit={handleFormSubmit} className = "modalContent">
+          <h2 className="modalTitle">Leave your review!</h2>
+          <TextField
+            label="Comment"
+            value={comment}
+            onChange={(event) => setComment(event.target.value)}
+            className="formField"
+          />
+          <Rating
+            name="simple-controlled"
+            value={rating}
+            onChange={(event, newValue) => {
+              setRating(newValue !== null ? newValue : 0);
+            }}
+            precision={0.5}
+            size="large"
+            className="formField"
+          />
+          <Button type="submit" className="submitButton">Submit</Button>
+        </form>
+      </Modal>
       <Container className="container">
-        <Box mt={2}>
+        <Box mt={2} style={{marginTop: '50px'}}>
           <List>
             {loans.map((loan) => (
               <ListItem key={loan.loanID}>
@@ -63,40 +154,58 @@ const LoanPage = () => {
                   <CardContent>
                     <Box>
                       <ListItemText
-                        primary={`Title: ${books.find(book => book.bookID === loan.bookID)?.title}`}
+                        primary={t('Title') + (books.find(book => book.bookID === loan.bookID)?.title)}
                       />
                     </Box>
                     <Box>
                       <ListItemText
-                        primary={`Author: ${books.find(book => book.bookID === loan.bookID)?.author}`}
+                        primary={t('Author') + (books.find(book => book.bookID === loan.bookID)?.author)}
                       />
                     </Box>
                     <Box>
                       <ListItemText
-                        primary={`Loan ID: ${loan.loanID}`}
+                        primary={t('Loan ID') + (loan.loanID)}
                       />
                     </Box>
                     <Box>
                       <ListItemText
-                        secondary={`Loan Date: ${loan.loanDate}`}
+                        secondary={t('Loan Date') + (loan.loanDate)}
                       />
                     </Box>
                     <Box>
                       <ListItemText
-                        secondary={`Due Date: ${loan.dueDate}`}
+                        secondary={t('Due Date') + (loan.dueDate)}
                       />
                     </Box>
                     <Box>
                       <ListItemText
-                        secondary={`Return Date: ${loan.returnDate}`}
+                        secondary={t('Return Date') + (loan.returnDate)}
                       />
                     </Box>
                     <Box>
                       <ListItemText
-                        secondary={`Status: ${loan.status}`}
+                        secondary={t('Status') + (loan.status)}
                       />
                     </Box>
                   </CardContent>
+                  <Box style={{ marginLeft: '440px' , marginTop: '100px' }}>
+                    <CardActions>
+                    <Box display="flex" flexDirection="column" justifyContent="flex-end">
+                      <Box mb={1}>
+                      <Button fullWidth onClick={() => handleAddReviewClick(typeof loan.bookID === 'number' ? loan.bookID : -1)} type="submit"
+                              color="primary"
+                              variant="contained"
+                              className="centered-button">{t('Add Review')}</Button>
+                        </Box>
+                      <Box display="flex" justifyContent="flex-end">
+                      <Button fullWidth onClick={() => handleReturnClick(typeof loan.bookID === 'number' ? loan.bookID : -1)} type="submit"
+                              color="primary"
+                              variant="contained"
+                              className="centered-button">{t('Return')}</Button>
+                    </Box>
+                    </Box>
+                    </CardActions>
+                  </Box>
                 </Card>
               </ListItem>
             ))}

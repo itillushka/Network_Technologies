@@ -1,15 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import loanImage1 from './kobzar.jpg';
 import './AdminLoan-page.css';
-import { AppBar, Toolbar, Box, List, ListItem, CardMedia, ListItemText, Typography, Card, CardContent, Select, MenuItem, Button } from '@mui/material';
+import {
+  AppBar,
+  Toolbar,
+  Box,
+  List,
+  ListItem,
+  CardMedia,
+  ListItemText,
+  Typography,
+  Card,
+  CardContent,
+  Select,
+  MenuItem,
+  Button,
+  CardActions
+} from '@mui/material';
 import { Container } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material';
 import { LoanResponseDto } from '../api/dto/loan-response.dto';
 import { LibraryClient } from '../api/library-client';
 import { Link } from 'react-router-dom';
+import AppBarComponent from '../components/AppBarComponent';
+import { BookResponseDto } from '../api/dto/book-response.dto';
+import { useTranslation } from 'react-i18next';
 
 const AdminLoanPage = () => {
+  const {t, i18n} = useTranslation();
   const [loans, setLoans] = useState<LoanResponseDto[]>([]);
+  const [books, setBooks] = useState<BookResponseDto[]>([]);
   const libraryClient = new LibraryClient();
 
   const handleConfirmClick = async (loanId: number) => {
@@ -35,16 +54,37 @@ const AdminLoanPage = () => {
     }
   };
 
+
   useEffect(() => {
-    const fetchLoans = async () => {
-      const response = await libraryClient.getAllLoansAdmin();
-      if (response.success) {
-        const loansWithCoverImage = response.data.map((loan: LoanResponseDto)=> ({ ...loan, coverImage: loanImage1 }));
-        setLoans(loansWithCoverImage);
+    const fetchData = async () => {
+      const [loansResponse, booksResponse] = await Promise.all([
+        libraryClient.getAllLoansAdmin(),
+        libraryClient.getAllBooks(),
+      ]);
+
+      if (loansResponse.success && booksResponse.success) {
+        const bookDetailsPromises = loansResponse.data.map((loan: LoanResponseDto) =>
+          libraryClient.getBookDetail(typeof loan.bookID === 'number' ? loan.bookID :-1)
+        );
+        const bookDetailsResponses = await Promise.all(bookDetailsPromises);
+
+        const mappedLoans = loansResponse.data.map((loan: LoanResponseDto, index: number) => {
+          const book = booksResponse.data.find((book: BookResponseDto) => book.bookID === loan.bookID);
+          const bookDetail = bookDetailsResponses[index].data;
+          return {
+            ...loan,
+            coverImageURL: bookDetail?.coverImageURL,
+            title: book?.title,
+            author: book?.author,
+          };
+        });
+
+        setLoans(mappedLoans);
+        setBooks(booksResponse.data);
       }
     };
 
-    fetchLoans();
+    fetchData();
   }, []);
 
   const handleStatusChange = (event: SelectChangeEvent<string>, loanId: number) => {
@@ -54,15 +94,7 @@ const AdminLoanPage = () => {
 
   return (
     <>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Admin Loan Management
-          </Typography>
-          <Button color="inherit" component={Link} to="/admin">Admin Console</Button>
-          <Button color="inherit" component={Link} to="/adminloan">Loan Management</Button>
-        </Toolbar>
-      </AppBar>
+      <AppBarComponent/>
       <Container className="container">
         <Box mt={2}>
           <List>
@@ -72,32 +104,46 @@ const AdminLoanPage = () => {
                   <CardMedia
                     component="img"
                     className="loan-cover"
-                    image={loanImage1}
-                    alt={"Book title"}
+                    image={loan.coverImageURL}
+                    alt={books.find(book => book.bookID === loan.bookID)?.title}
                     sx={{ height: 300, width: 200 }}
                   />
                   <CardContent>
                     <Box>
                       <ListItemText
-                        primary={loan.loanID}
+                        primary={t('Title') + (books.find(book => book.bookID === loan.bookID)?.title)}
                       />
                     </Box>
                     <Box>
                       <ListItemText
-                        secondary={`Loan Date: ${loan.loanDate}`}
+                        primary={t('Author') + (books.find(book => book.bookID === loan.bookID)?.author)}
                       />
                     </Box>
                     <Box>
                       <ListItemText
-                        secondary={`Return Date: ${loan.returnDate}`}
+                        primary={t('Loan ID') + (loan.loanID)}
                       />
                     </Box>
                     <Box>
                       <ListItemText
-                        secondary={`Due Date: ${loan.dueDate}`}
+                        secondary={t('Loan Date') + (loan.loanDate)}
                       />
                     </Box>
                     <Box>
+                      <ListItemText
+                        secondary={t('Due Date') + (loan.dueDate)}
+                      />
+                    </Box>
+                    <Box>
+                      <ListItemText
+                        secondary={t('Return Date') + (loan.returnDate)}
+                      />
+                    </Box>
+                  </CardContent>
+                    <Box style={{ marginLeft: '440px' , marginTop: '100px' }}>
+                      <CardActions>
+                        <Box display="flex" flexDirection="column" justifyContent="flex-end">
+                          <Box mb={1}>
                       <Select
                         value={loan.status}
                         onChange={(event) => handleStatusChange(event, typeof loan.loanID === 'number' ? loan.loanID :0)}
@@ -109,9 +155,13 @@ const AdminLoanPage = () => {
                         <MenuItem value="OVERDUE">OVERDUE</MenuItem>
                         <MenuItem value="PENDING_RETURN">PENDING_RETURN</MenuItem>
                       </Select>
-                      <Button onClick={() => handleConfirmClick(typeof loan.loanID === 'number' ? loan.loanID :0)}>Confirm</Button>
+                            </Box>
+
+                      <Button className={"submitButton"} onClick={() => handleConfirmClick(typeof loan.loanID === 'number' ? loan.loanID :0)}>{t('CONFIRM')}</Button>
+
                     </Box>
-                  </CardContent>
+                  </CardActions>
+                    </Box>
                 </Card>
               </ListItem>
             ))}

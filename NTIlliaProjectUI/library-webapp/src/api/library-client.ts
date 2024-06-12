@@ -10,6 +10,9 @@ import { DeleteBookRequestDto } from './dto/delete-book-details-request.dto';
 import { BookDetailsResponseDto } from './dto/book-details-response.dto';
 import { CreateLoanRequestDto } from './dto/create-loan-request.dto';
 import { LoanUpdateStatusDto } from './dto/loan-update-status.dto';
+import { ReturnLoanRequestDto } from './dto/return-loan-request.dto';
+import { ReviewCreateRequestDto } from './dto/review-create-request.dto';
+import { ReviewResponseDto } from './dto/review-response.dto';
 
 type ClientResponse = {
 	success: boolean;
@@ -236,6 +239,24 @@ export class LibraryClient {
 		}
 	}
 
+	public async getReviews(bookId: number): Promise<ClientResponse> {
+		try {
+			const response: AxiosResponse<ReviewResponseDto> = await this.client.get(`/reviews/${bookId}`);
+			return {
+				success: true,
+				data: response.data,
+				status: response.status,
+			};
+		} catch (error) {
+			const axiosError = error as AxiosError<Error>;
+			return {
+				success: false,
+				data: axiosError.response?.data,
+				status: axiosError.response?.status || 500,
+			};
+		}
+	}
+
 	public async createLoan(data: CreateLoanRequestDto): Promise<number> {
 		try {
 			const token = localStorage.getItem('token');
@@ -255,6 +276,25 @@ export class LibraryClient {
 		}
 	}
 
+	public async returnLoan(data: ReturnLoanRequestDto): Promise<number> {
+		try {
+			const token = localStorage.getItem('token');
+			const axiosConfig = {
+				headers: {
+					'Authorization': 'Bearer ' + token
+				}
+			}
+			console.log(axiosConfig.headers.Authorization);
+			const response: AxiosResponse<LoginResponseDto> = await this.client.post('/loans/return', data, axiosConfig);
+
+			this.client.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+			return response.status;
+		} catch (error) {
+			const axiosError = error as AxiosError<Error>;
+			return axiosError.response?.status || 0;
+		}
+	}
+
 	public async updateLoan(data: LoanUpdateStatusDto, loanID: number): Promise<number> {
 		try {
 			const token = localStorage.getItem('token');
@@ -265,6 +305,25 @@ export class LibraryClient {
 			}
 			console.log(axiosConfig.headers.Authorization);
 			const response: AxiosResponse<LoginResponseDto> = await this.client.post(`/loans/${loanID}/status`, data, axiosConfig);
+
+			this.client.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+			return response.status;
+		} catch (error) {
+			const axiosError = error as AxiosError<Error>;
+			return axiosError.response?.status || 0;
+		}
+	}
+
+	public async createReview(data: ReviewCreateRequestDto, bookId: number): Promise<number> {
+		try {
+			const token = localStorage.getItem('token');
+			const axiosConfig = {
+				headers: {
+					'Authorization': 'Bearer ' + token
+				}
+			}
+			console.log(axiosConfig.headers.Authorization);
+			const response: AxiosResponse<LoginResponseDto> = await this.client.post(`/reviews/${bookId}/leftReview`, data, axiosConfig);
 
 			this.client.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
 			return response.status;

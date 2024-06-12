@@ -17,5 +17,5 @@ i18n.use(LanguageDetector).use(initReactI18next).init({
 	fallbackLng: "en",
 	resources,
 });
-i18n.changeLanguage("ua")
+
 export default i18n;

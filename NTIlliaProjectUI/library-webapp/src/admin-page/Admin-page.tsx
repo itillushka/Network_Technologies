@@ -11,9 +11,12 @@ import { CreateBookRequestDto } from '../api/dto/create-book-request.dto';
 import { AddBookDetailsRequestDto } from '../api/dto/add-book-details-request.dto';
 import { DeleteBookRequestDto } from '../api/dto/delete-book-details-request.dto';
 import DeleteBookForm from './DeleteBookForm';
+import AppBarComponent from '../components/AppBarComponent';
+import { useTranslation } from 'react-i18next';
 
 const AdminPage = () => {
   const libraryClient = new LibraryClient();
+  const {t, i18n} = useTranslation();
 
   const handleUserRegistration = async (values: RegisterUserRequestDto) => {
     const status = await libraryClient.registerUser(values);
@@ -61,42 +64,34 @@ const AdminPage = () => {
 
   return (
     <>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Admin Console
-          </Typography>
-          <Button color="inherit" component={Link} to="/admin">Admin Console</Button>
-          <Button color="inherit" component={Link} to="/adminloan">Loan Management</Button>
-        </Toolbar>
-      </AppBar>
+      <AppBarComponent/>
       <Container>
         <Box mt={5} className="container">
           <Typography variant="h4" component="h1" gutterBottom>
-            Admin Page
+            {t('Admin Page')}
           </Typography>
         </Box>
         <Box mt={5} className="container">
           <Typography variant="h5" component="h2" gutterBottom>
-            Register New User
+            {t('Register New User')}
           </Typography>
           <UserRegistrationForm onSubmit={handleUserRegistration} />
         </Box>
         <Box mt={5} className="container">
           <Typography variant="h5" component="h2" gutterBottom>
-            Add New Book
+            {t('Add New Book')}
           </Typography>
           <AddBookForm onSubmit={handleCreateBook}/>
         </Box>
         <Box mt={5} className="container">
           <Typography variant="h5" component="h2" gutterBottom>
-            Add Book Details
+            {t('Add Book Details')}
           </Typography>
           <AddBookDetailsForm onSubmit={handleAddBookDetails}/>
         </Box>
         <Box mt={5} className="container">
           <Typography variant="h5" component="h2" gutterBottom>
-            Delete Book
+            {t('Delete Book')}
           </Typography>
           <DeleteBookForm onSubmit={handleDeleteBook}/>
         </Box>

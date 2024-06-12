@@ -6,9 +6,11 @@ import { useNavigate } from 'react-router-dom';
 import './Login-form.css';
 import axios from 'axios';
 import { useApi } from '../api/ApiProvider';
+import { useTranslation } from 'react-i18next';
 function LoginForm() {
 	const navigate = useNavigate();
 	const apiClient = useApi();
+	const {t, i18n} = useTranslation();
 
 	const initialValues = useMemo(() => ({ username: '', password: '' }), []);
 
@@ -67,7 +69,7 @@ function LoginForm() {
 					<TextField
 						id="username"
 						name="username"
-						label="Username"
+						label={t('Username')}
 						value={formik.values.username}
 						onChange={formik.handleChange}
 						error={formik.touched.username && Boolean(formik.errors.username)}
@@ -76,7 +78,7 @@ function LoginForm() {
 					<TextField
 						id="password"
 						name="password"
-						label="Password"
+						label={t('Password')}
 						type="password"
 						value={formik.values.password}
 						onChange={formik.handleChange}
@@ -89,7 +91,7 @@ function LoginForm() {
 						className="centered-button"
 						type="submit"
 					>
-						Login
+						{t('Login')}
 					</Button>
 				</form>
 			)}

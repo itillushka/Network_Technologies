@@ -7,3 +7,6 @@
   justify-content: center;
   gap: 2rem;
 }
+.MuiButton-root {
+  background-color: #8B4513 !important; /* DarkBrown */
+}

@@ -1,3 +1,48 @@
 {
-  "library": "Digital Vintage Library"
+  "library": "Digital Vintage Library",
+  "Login": "Login",
+  "Books": "Books",
+  "Loans": "Loans",
+  "Admin": "Admin",
+  "Admin Loans": "Admin Loans",
+  "Username": "Username",
+  "Password": "Password",
+  "Welcome": "Welcome to the Digital Vintage Library",
+  "Description": "This is a digital platform where you can find and loan vintage books.",
+  "More": "More",
+  "Less": "Less",
+  "ISBN": "ISBN: ",
+  "Publisher": "Publisher: ",
+  "Genre": "Genre: ",
+  "Summary": "Summary: ",
+  "Last comment": "Last comment: ",
+  "Borrow": "Borrow",
+  "My Book Store": "My Book Store",
+  "Title": "Title: ",
+  "Author": "Author: ",
+  "Loan ID": "Loan ID: ",
+  "Loan Date": "Loan Date: ",
+  "Due Date": "Due Date: ",
+  "Return Date": "Return Date: ",
+  "Status": "Status: ",
+  "Add Review": "Add Review",
+  "Return": "Return",
+  "CONFIRM": "CONFIRM",
+  "Admin Page": "Admin Page",
+  "Register New User": "Register New User",
+  "Add New Book": "Add New Book",
+  "Add Book Details": "Add Book Details",
+  "Delete Book": "Delete Book",
+  "Email": "Email",
+  "REGISTER": "REGISTER",
+  "Year Published": "Year Published",
+  "Available Copies": "Available Copies",
+  "Add Book": "Add Book",
+  "Book ID": "Book ID",
+  "Cover Image": "Cover Image"
+
+
+
+
+
 }
